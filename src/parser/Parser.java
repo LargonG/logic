@@ -5,22 +5,37 @@ public class Parser {
         return parseExpression(null, null, null, new StringIndexer(expression));
     }
 
-    private Expression parseExpression(Operator oldOp, Operator op, Expression left, StringIndexer cursor) {
+    /**
+     *
+     * @param oldOp оператор выражения "сверху" (выражения, для которого данное выражение является его "правой" частью)
+     * @param op оператор, который соединяет сформированное выражение и остаток
+     * @param left сформированное выражение
+     * @param tail остаток
+     * @return expression
+     */
+    private Expression parseExpression(Operator oldOp, Operator op, Expression left, StringIndexer tail) {
         int code;
         Expression right = null;
-        while ((code = cursor.read()) != -1) {
+        while ((code = tail.read()) != -1) {
             char symbol = (char) code;
+
+            // symbol in "()[Letter]{&,|,->,!}{\r,\t," "}"
+
             if (Character.isWhitespace(symbol)) {
                 continue;
             }
 
-            if (symbol == ')') {
-                if (oldOp != null) cursor.back();
-                return Expression.create(op, left, right);
+            Expression expr = null;
+            if (Character.isLetter(symbol)) {
+                expr = parseVariable(symbol, tail);
             }
 
             if (symbol == '(') {
-                Expression expr = parseExpression(null, null, null, cursor);
+                expr = parseExpression(null, null, null, tail);
+            }
+
+            if (expr != null) {
+                // left == null || right == null (op ==/!= null)
                 if (left == null) {
                     left = expr;
                 } else {
@@ -29,58 +44,31 @@ public class Parser {
                 continue;
             }
 
-            if (Character.isLetter(symbol)) {
-                cursor.back();
-                Expression expr = parseVariable(cursor);
-                if (left == null) {
-                    left = expr;
-                } else {
-                    right = expr;
-                }
-                continue;
-            }
-
-            Operator newOp;
+            Operator newOp = null;
             switch (symbol) {
-                case '&':
-                    newOp = Operator.AND;
-                    break;
-                case '|':
-                    newOp = Operator.OR;
-                    break;
-                case '-':
-                    newOp = Operator.IMPL;
-                    break;
-                case '!':
-                    newOp = Operator.NOT;
-                    break;
-                default:
-                    throw new RuntimeException("Parse exception: " + symbol + " " + cursor.position());
+                case '&': newOp = Operator.AND; break;
+                case '|': newOp = Operator.OR; break;
+                case '-': newOp = Operator.IMPL; break;
+                case '!': newOp = Operator.NOT; break;
             }
 
-            if (newOp == Operator.IMPL) {
-                cursor.read();
-            }
-
-            if (newOp.unary) {
-                if (left == null) {
-                    left = Expression.create(newOp, parseUnary(cursor), null);
-                } else {
-                    right = Expression.create(newOp, right, parseUnary(cursor));
-                }
-                continue;
-            }
-
-            if (oldOp != null && (newOp.priority < oldOp.priority || newOp == oldOp && newOp.leftAssoc)) {
-                cursor.back();
-                if (newOp == Operator.IMPL) cursor.back();
+            // oldOp.prior <= op.prior
+            assert symbol == ')' || newOp != null;
+            assert oldOp != null || symbol == ')';
+            if (symbol == ')' || oldOp != null && (newOp.priority < oldOp.priority || (newOp == oldOp && newOp.leftAssoc))) {
+                if (!(symbol == ')' && oldOp == null)) tail.back();
                 return Expression.create(op, left, right);
+            }
+
+            // impl == "->"
+            if (newOp == Operator.IMPL) {
+                tail.read();
             }
 
             if (op == null) {
                 op = newOp;
-            } else if (newOp.priority > op.priority || newOp == op && !op.leftAssoc) {
-                right = parseExpression(op, newOp, right, cursor);
+            } else if (op.priority < newOp.priority || (op == newOp && !op.leftAssoc)) {
+                right = parseExpression(op, newOp, right, tail);
             } else {
                 left = Expression.create(op, left, right);
                 op = newOp;
@@ -91,43 +79,18 @@ public class Parser {
         return Expression.create(op, left, right);
     }
 
-    private Expression parseUnary(StringIndexer cursor) {
+    private Expression parseVariable(char start, StringIndexer tail) {
+        StringBuilder builder = new StringBuilder().append(start);
         int code;
-        while ((code = cursor.read()) != -1) {
+        while ((code = tail.read()) != -1) {
             char symbol = (char) code;
-            if (Character.isWhitespace(symbol)) {
-                continue;
-            }
-
-            if (symbol == '(') {
-                return parseExpression(null, null, null, cursor);
-            }
-            if (symbol == '!') {
-                return Expression.create(Operator.NOT, parseUnary(cursor),null);
-            }
-            if (Character.isLetter(symbol)) {
-                cursor.back();
-                return parseVariable(cursor);
-            }
-
-            throw new IllegalStateException("Unexpected value: " + symbol + " " + cursor.position());
-        }
-        throw new RuntimeException("Parse error");
-    }
-
-    private Expression parseVariable(StringIndexer cursor) {
-        int start = cursor.position();
-        int code;
-        while ((code = cursor.read()) != -1) {
-            char symbol = (char) code;
-            if (!(cursor.position() - start > 1 && (Character.isLetter(symbol) || Character.isDigit(symbol) ||
-                    symbol == (char) 39)
-            || Character.isLetter(symbol))) {
-                cursor.back();
+            if (Character.isLetter(symbol) || Character.isDigit(symbol) || symbol == (char) 39) {
+                builder.append(symbol);
+            } else {
+                tail.back();
                 break;
             }
         }
-        String name = cursor.substring(start, cursor.position());
-        return new Variable(name);
+        return new Variable(builder.toString());
     }
 }

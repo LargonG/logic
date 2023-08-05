@@ -1,11 +1,10 @@
 package parser;
 
 public enum Operator {
-    NONE(0, false, false),
-    AND(4, false, true),
-    OR(3, false, true),
     IMPL(2, false, false),
-    NOT(5, true, false);
+    OR  (3, false, true),
+    AND (4, false, true),
+    NOT (5, true, false);
 
     public final int priority;
     public final boolean unary;

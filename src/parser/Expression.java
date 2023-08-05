@@ -7,16 +7,19 @@ public interface Expression {
     String suffixString(Operator before);
 
     static Expression create(Operator operator, Expression left, Expression right) {
-        if (operator == null && right == null) {
-            return left;
+        if (operator == null) {
+            assert left != null || right != null;
+            assert left == null || right == null;
+            return left != null ? left : right;
         }
-        if (operator.unary && (left == null || right == null)) {
+
+        if (operator.unary) {
+            assert left != null || right != null;
+            assert left == null || right == null;
             return new UnaryOperator(operator, left != null ? left : right);
         }
-        if (right != null && !operator.unary) {
-            return new BinaryOperator(operator, left, right);
-        }
-        throw new IllegalArgumentException("Incorrect arguments combination: " + operator + " "
-                + left + " " + right);
+
+        assert left != null && right != null;
+        return new BinaryOperator(operator, left, right);
     }
 }

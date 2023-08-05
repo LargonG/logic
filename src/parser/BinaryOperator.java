@@ -33,7 +33,7 @@ public class BinaryOperator implements Expression {
 
     @Override
     public String suffixString(Operator before) {
-        if (before.priority >= operator.priority) {
+        if (before != null && before.priority >= operator.priority) {
             return "(" + left.suffixString(operator) + operator + right.suffixString(operator) + ")";
         }
         return left.suffixString(operator) + operator + right.suffixString(operator);

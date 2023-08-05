@@ -6,11 +6,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-    private static final Operator AND = Operator.AND;
-    private static final Operator OR = Operator.OR;
-    private static final Operator IMPL = Operator.IMPL;
-    private static final Operator NOT = Operator.NOT;
-
     public static void main(String[] args) {
 //        test(100000);
         Scanner scanner = new Scanner(System.in);
@@ -25,19 +20,19 @@ public class Main {
         Parser parser = new Parser();
         for (int it = 0; it < testsCount; it++) {
             Expression before = generator.generate(2);
-            String expr = before.suffixString(Operator.NONE);
+            String expr = before.suffixString(null);
             Expression after = parser.parse(expr);
             if (before.toString().equals(after.toString())) {
                 System.out.println("OK");
                 System.out.println("Before: " + before);
                 System.out.println("After: " + after);
-                System.out.println("Suffix: " + before.suffixString(Operator.NONE));
+                System.out.println("Suffix: " + before.suffixString(null));
             } else {
                 System.out.println("ERROR!");
                 System.out.println("Before: " + before);
                 System.out.println("After: " + after);
-                System.out.println("Suffix before: " + before.suffixString(Operator.NONE));
-                System.out.println("Suffix after:  " + after.suffixString(Operator.NONE));
+                System.out.println("Suffix before: " + before.suffixString(null));
+                System.out.println("Suffix after:  " + after.suffixString(null));
                 break;
             }
         }
