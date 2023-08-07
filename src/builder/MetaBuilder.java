@@ -96,28 +96,6 @@ public class MetaBuilder {
                 }
             }
 
-//            if (axiomId == -1 && hypothesisId == -1) {
-//                for (int j = 0; j < proofs.size(); j++) {
-//                    Proof proof = proofs.get(j);
-//                    if (proof.expr instanceof BinaryOperator
-//                            && proof.hyps.equals(hypotheses)) {
-//                        BinaryOperator impl = (BinaryOperator) proof.expr;
-//                        if (impl.operator == Operator.IMPL && impl.right.equals(expr)) {
-//                            Expression left = impl.left;
-//                            for (int id: expressions.getOrDefault(left, new ArrayList<>())) {
-//                                if (proofs.get(id).hyps.equals(hypotheses)) {
-//                                    modus = id;
-//                                    ponens = j;
-//                                    comment = "M.P. " + (id + 1) + ", " + (j + 1);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
-//                    if (modus != -1) break;
-//                }
-//            }
-
             // Deduction
             Expression dedExpr = expr;
             Map<Expression, Integer> dedHypotheses = new HashMap<>();
@@ -167,92 +145,6 @@ public class MetaBuilder {
         }
 
         return answer;
-//        List<String> result = new ArrayList<>();
-//        List<Proof> proofs = new ArrayList<>();
-//        Map<Expression, List<Integer>> exprs = new HashMap<>();
-//        for (int i = 0; i < lines.size(); i++) {
-//            String[] t = lines.get(i).split("[|]-");
-//            Map<Expression, Integer> hyps = new HashMap<>();
-//            List<Expression> context = new ArrayList<>();
-//            for (String str : t[0].split(",")) {
-//                if (str.isEmpty()) {
-//                    continue;
-//                }
-//                Expression e = parser.parse(str);
-//                hyps.merge(e, 1, Integer::sum);
-//                context.add(e);
-//            }
-//            Expression expr = parser.parse(t[1]);
-//            String args = "Incorrect";
-//            int axiomId;
-//            boolean axiom = false;
-//            if ((axiomId = Axioms.isAxiom(expr)) != -1) {
-//                axiom = true;
-//                args = "Ax. sch. " + (axiomId + 1);
-//            }
-//
-//            boolean hypothesis = false;
-//            for (int j = 0; j < hyps.size(); j++) {
-//                if (context.get(j).equals(expr)) {
-//                    hypothesis = true;
-//                    args = "Hyp. " + (j + 1);
-//                    break;
-//                }
-//            }
-//
-//            boolean modus = false;
-//            // Modus Ponens
-//            if (!axiom && !hypothesis) {
-//                for (int j = 0; j < proofs.size(); j++) {
-//                    Proof proof = proofs.get(j);
-//                    if (proof.expr instanceof BinaryOperator
-//                            && proof.hyps.equals(hyps)) {
-//                        BinaryOperator impl = (BinaryOperator) proof.expr;
-//                        if (impl.operator == Operator.IMPL && impl.right.equals(expr)) {
-//                            Expression left = impl.left;
-//                            for (int id: exprs.getOrDefault(left, new ArrayList<>())) {
-//                                if (proofs.get(id).hyps.equals(hyps)) {
-//                                    modus = true;
-//                                    args = "M.P. " + (id + 1) + ", " + (j + 1);
-//                                    break;
-//                                }
-//                            }
-//                        }
-//                    }
-//                    if (modus) break;
-//                }
-//            }
-//
-//            Expression dedExpr = expr;
-//            Map<Expression, Integer> dedContext = new HashMap<>(hyps);
-//            // Deduction
-//            while (dedExpr instanceof BinaryOperator) {
-//                BinaryOperator impl = (BinaryOperator) dedExpr;
-//                if (impl.operator == Operator.IMPL) {
-//                    dedContext.merge(impl.left, 1, Integer::sum);
-//                    dedExpr = impl.right;
-//                } else {
-//                    break;
-//                }
-//            }
-//
-//            if (!axiom && !hypothesis && !modus) {
-//                for (int j = 0; j < proofs.size(); j++) {
-//                    Proof proof = proofs.get(j);
-//                    if (proof.dedHyps.equals(dedContext) && proof.dedExpr.equals(dedExpr)) {
-//                        args = "Ded. " + (j + 1);
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            result.add(metaExpression(lines.get(i), i + 1, args));
-//            int finalI = i;
-//            exprs.merge(expr, new ArrayList<Integer>() {{add(finalI);}}, (oldL, newL) -> {oldL.addAll(newL); return oldL;});
-//            proofs.add(new Proof(dedContext, dedExpr, hyps, expr, i));
-//        }
-//
-//        return result;
     }
 
     public static String metaExpression(String expr, int lineId, String args) {
