@@ -2,9 +2,7 @@ package resolver;
 
 import parser.*;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Resolver {
     public boolean resolve(Expression expression, Expression scheme, Map<String, Expression> memes) {

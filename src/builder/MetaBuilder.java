@@ -2,8 +2,6 @@ package builder;
 
 import parser.*;
 import resolver.Axioms;
-import resolver.Hypothesis;
-import sun.reflect.generics.tree.Tree;
 
 import java.util.*;
 import java.util.function.BiFunction;

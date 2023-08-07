@@ -6,7 +6,6 @@ import parser.Parser;
 import resolver.Axioms;
 
 import java.util.HashMap;
-import java.util.Set;
 
 public class MetaGenerator {
     private final Parser parser;
