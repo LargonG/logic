@@ -1,6 +1,8 @@
 package generator;
 
 import builder.MetaBuilder;
+import builder.Proof;
+import builder.descriptions.AxiomScheme;
 import parser.Expression;
 import parser.Parser;
 import resolver.Axioms;
@@ -37,7 +39,7 @@ public class MetaGenerator {
                 put("c", expressionGenerator.generate(len));
                 put("y", expressionGenerator.generate(len));
             }}).suffixString(null);
-            result[ai] = MetaBuilder.metaExpression(lines[ai], ai + 1, "Ax. sch. " + (ai + 1));
+            result[ai] = Proof.metaExpression(lines[ai], ai + 1, new AxiomScheme(ai));
             ai++;
         }
         return new Test(lines, result);

@@ -1,5 +1,6 @@
 package builder;
 
+import builder.descriptions.*;
 import parser.*;
 import resolver.Axioms;
 
@@ -8,52 +9,25 @@ import java.util.function.BiFunction;
 
 public class MetaBuilder {
     private static final List<Integer> emptyList = new ArrayList<>();
-    private static class Proof {
-        Map<Expression, Integer> dedHyps;
-        Map<Expression, Integer> hyps;
-
-        Expression dedExpr;
-        Expression expr;
-        int id;
-
-        public Proof(Map<Expression, Integer> dedHyps, Expression dedExpr,
-                     Map<Expression, Integer> hyps, Expression expr,
-                     int id) {
-            this.dedHyps = dedHyps;
-            this.dedExpr = dedExpr;
-            this.hyps = hyps;
-            this.expr = expr;
-            this.id = id;
-        }
-
-        @Override
-        public String toString() {
-            return "Proof{" +
-                    "dedHyps=" + dedHyps +
-                    ", hyps=" + hyps +
-                    ", dedExpr=" + dedExpr +
-                    ", expr=" + expr +
-                    ", id=" + id +
-                    '}';
-        }
-    }
     private final Parser parser;
 
     public MetaBuilder() {
         this.parser = new Parser();
     }
 
-    public List<String> build(List<String> lines) {
+    public List<Proof> build(List<String> lines) {
         List<Proof> proofs = new ArrayList<>(lines.size());
         Map<Expression, List<Integer>> rightPartOfImplication = new TreeMap<>();
         Map<Expression, List<Integer>> expressions = new TreeMap<>();
-        List<String> answer = new ArrayList<>(lines.size());
+
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             String[] ln = line.split("[|]-");
             String[] unparsedHypotheses = ln[0].split(",");
+
             Map<Expression, Integer> hypotheses = new TreeMap<>();
             List<Expression> hypothesesList = new ArrayList<>(unparsedHypotheses.length);
+
             for (String unparsedHypothesis : unparsedHypotheses) {
                 Expression hyp = parser.parse(unparsedHypothesis);
                 if (hyp == null) {
@@ -64,30 +38,33 @@ public class MetaBuilder {
             }
             Expression expr = parser.parse(ln[1]);
 
-            String comment = "Incorrect";
+            Description comment = new Incorrect();
+
             // Axiom
             int axiomId;
             if ((axiomId = Axioms.isAxiom(expr)) != -1) {
-                comment = "Ax. sch. " + (axiomId + 1);
+                comment = new AxiomScheme(axiomId);
             }
 
+            // Hypothesis
             int hypothesisId = -1;
             if (axiomId == -1 && (hypothesisId = hypothesesList.indexOf(expr)) != -1) {
-                comment = "Hyp. " + (hypothesisId + 1);
+                comment = new Hypothesis(hypothesisId);
             }
 
+            // Modus Ponens
             int modus = -1, ponens = -1;
             if (axiomId == -1 && hypothesisId == -1) {
                 for (int implI : rightPartOfImplication.getOrDefault(expr, emptyList)) {
                     Proof implicationProof = proofs.get(implI);
-                    BinaryOperator impl = (BinaryOperator) implicationProof.expr;
-                    if (implicationProof.hyps.equals(hypotheses)) {
+                    BinaryOperator impl = (BinaryOperator) implicationProof.expression;
+                    if (implicationProof.context.equals(hypotheses)) {
                         for (int ai : expressions.getOrDefault(impl.left, emptyList)) {
                             Proof alphaProof = proofs.get(ai);
-                            if (alphaProof.hyps.equals(hypotheses)) {
+                            if (alphaProof.context.equals(hypotheses)) {
                                 modus = ai;
                                 ponens = implI;
-                                comment = "M.P. " + (modus + 1) + ", " + (ponens + 1);
+                                comment = new ModusPonens(modus, ponens);
                             }
                         }
                     }
@@ -113,9 +90,9 @@ public class MetaBuilder {
             if (axiomId == -1 && hypothesisId == -1 && modus == -1 && ponens == -1) {
                 for (int proofId = 0; proofId < proofs.size(); proofId++) {
                     Proof proof = proofs.get(proofId);
-                    if (proof.dedExpr.equals(dedExpr) && proof.dedHyps.equals(dedHypotheses)) {
+                    if (proof.deductionExpression.equals(dedExpr) && proof.deductionContext.equals(dedHypotheses)) {
                         dedId = proofId;
-                        comment = "Ded. " + (dedId + 1);
+                        comment = new Deduction(dedId);
                         break;
                     }
                 }
@@ -129,7 +106,7 @@ public class MetaBuilder {
                     mergeLists = (oldL, newL) -> {oldL.addAll(newL); return oldL;};
 
 
-            proofs.add(new Proof(dedHypotheses, dedExpr, hypotheses, expr, i));
+            proofs.add(new Proof(expr, hypothesesList, hypotheses, dedExpr, dedHypotheses, i, comment, line));
 
             if (expr instanceof BinaryOperator) {
                 BinaryOperator impl = (BinaryOperator) expr;
@@ -138,14 +115,8 @@ public class MetaBuilder {
                 }
             }
             expressions.merge(expr, new ArrayList<Integer>() {{add(id);}}, mergeLists);
-
-            answer.add(metaExpression(line, i + 1, comment));
         }
 
-        return answer;
-    }
-
-    public static String metaExpression(String expr, int lineId, String args) {
-        return "[" + lineId + "] " + expr + " [" + args + "]";
+        return proofs;
     }
 }
