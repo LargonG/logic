@@ -1,10 +1,11 @@
 package parser;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class UnaryOperator implements Expression {
-    private final Operator operator;
-    private final Expression expr;
+    public final Operator operator;
+    public final Expression expr;
 
     public UnaryOperator(Operator operator, Expression expr) {
         this.operator = operator;
@@ -29,5 +30,38 @@ public class UnaryOperator implements Expression {
     @Override
     public String suffixString(Operator before) {
         return operator.toString() + expr.suffixString(this.operator);
+    }
+
+    @Override
+    public Expression paste(Map<String, Expression> values) {
+        return new UnaryOperator(operator, expr.paste(values));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UnaryOperator that = (UnaryOperator) o;
+        return operator == that.operator && Objects.equals(expr, that.expr);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operator, expr);
+    }
+
+    @Override
+    public int compareTo(Expression o) {
+        if (o instanceof Scheme || o instanceof BinaryOperator) {
+            return -1;
+        } else if (o instanceof UnaryOperator) {
+            UnaryOperator unary = (UnaryOperator) o;
+            int result = operator.compareTo(unary.operator);
+            if (result == 0) {
+                result = expr.compareTo(unary.expr);
+            }
+            return result;
+        }
+        return 1;
     }
 }

@@ -3,21 +3,21 @@ package parser;
 import java.util.Map;
 import java.util.Objects;
 
-public class Variable implements Expression {
+public class Scheme implements Expression {
     public final String name;
 
-    public Variable(String name) {
+    public Scheme(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean calculate(Map<String, Boolean> values) {
+        throw new UnsupportedOperationException("Cannot calculate scheme");
     }
 
     @Override
     public String toString() {
         return name;
-    }
-
-    @Override
-    public boolean calculate(Map<String, Boolean> values) {
-        return values.get(name);
     }
 
     @Override
@@ -27,15 +27,15 @@ public class Variable implements Expression {
 
     @Override
     public Expression paste(Map<String, Expression> values) {
-        return this;
+        return values.get(name);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Variable variable = (Variable) o;
-        return Objects.equals(name, variable.name);
+        Scheme scheme = (Scheme) o;
+        return Objects.equals(name, scheme.name);
     }
 
     @Override
@@ -45,10 +45,10 @@ public class Variable implements Expression {
 
     @Override
     public int compareTo(Expression o) {
-        if (o instanceof Variable) {
-            Variable value = (Variable) o;
-            return name.compareTo(value.name);
+        if (o instanceof Scheme) {
+            Scheme sh = (Scheme) o;
+            return name.compareTo(sh.name);
         }
-        return -1;
+        return 1;
     }
 }

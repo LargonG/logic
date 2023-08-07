@@ -2,12 +2,13 @@ package parser;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 
 public class BinaryOperator implements Expression {
-    private final Operator operator;
-    private final Expression left;
-    private final Expression right;
+    public final Operator operator;
+    public final Expression left;
+    public final Expression right;
 
     public BinaryOperator(Operator operator, Expression left, Expression right) {
         this.operator = operator;
@@ -37,5 +38,44 @@ public class BinaryOperator implements Expression {
             return "(" + left.suffixString(operator) + operator + right.suffixString(operator) + ")";
         }
         return left.suffixString(operator) + operator + right.suffixString(operator);
+    }
+
+    @Override
+    public Expression paste(Map<String, Expression> values) {
+        return new BinaryOperator(operator, left.paste(values), right.paste(values));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BinaryOperator that = (BinaryOperator) o;
+        return operator == that.operator && Objects.equals(left, that.left) && Objects.equals(right, that.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operator, left, right);
+    }
+
+    @Override
+    public int compareTo(Expression o) {
+        if (o instanceof Scheme)
+            return -1;
+        if (o instanceof BinaryOperator) {
+            BinaryOperator bin = (BinaryOperator) o;
+            int result = operator.compareTo(bin.operator);
+
+            if (result == 0) {
+                result = left.compareTo(bin.left);
+            }
+
+            if (result == 0) {
+                result = right.compareTo(bin.right);
+            }
+
+            return result;
+        }
+        return 1;
     }
 }

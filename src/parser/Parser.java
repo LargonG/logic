@@ -91,6 +91,10 @@ public class Parser {
                 break;
             }
         }
-        return new Variable(builder.toString());
+
+        if (Character.isUpperCase(start)) {
+            return new Variable(builder.toString());
+        }
+        return new Scheme(builder.toString());
     }
 }

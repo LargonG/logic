@@ -2,9 +2,10 @@ package parser;
 
 import java.util.Map;
 
-public interface Expression {
+public interface Expression extends Comparable<Expression> {
     boolean calculate(Map<String, Boolean> values);
     String suffixString(Operator before);
+    Expression paste(Map<String, Expression> values);
 
     static Expression create(Operator operator, Expression left, Expression right) {
         if (operator == null) {
