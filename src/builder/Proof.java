@@ -2,9 +2,12 @@ package builder;
 
 import builder.descriptions.Description;
 import parser.Expression;
+import parser.Operator;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Proof {
     public final Expression expression;
@@ -20,34 +23,40 @@ public class Proof {
 
     private String expressionString;
 
-    public Proof(Expression expr,
-                 List<Expression> contextList,
-                 Map<Expression, Integer> context,
-                 Expression dedExpr,
-                 Map<Expression, Integer> dedContext,
-                 int id,
-                 Description description,
-                 String expressionString) {
+    public Proof(final Expression expr,
+                 final List<Expression> context,
+                 final int id) {
         this.expression = expr;
-        this.contextList = contextList;
-        this.context = context;
-        this.deductionExpression = dedExpr;
-        this.deductionContext = dedContext;
+        this.contextList = context;
         this.id = id;
-        this.description = description;
-        this.expressionString = expressionString;
+
+        this.context = context.stream().collect(
+                Collectors.toMap(
+                        expression -> expression,
+                        expression -> 1,
+                        Integer::sum));
+
+        List<Expression> ded = Expression.separate(expr, Operator.IMPL);
+        this.deductionExpression = ded.get(ded.size() - 1);
+        this.deductionContext = Stream.concat(
+                ded.subList(0, ded.size() - 1).stream(),
+                context.stream()).collect(
+                        Collectors.toMap(
+                            expression -> expression,
+                            expression -> 1,
+                            Integer::sum));
     }
 
     private String getExpressionString() {
         if (expressionString == null) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < contextList.size(); i++) {
-                builder.append(contextList.get(i).suffixString(null));
+                builder.append(contextList.get(i).suffixString());
                 if (i + 1 < contextList.size()) {
                     builder.append(",");
                 }
             }
-            builder.append("|-").append(expression.suffixString(null));
+            builder.append("|-").append(expression.suffixString());
             expressionString = builder.toString();
         }
         return expressionString;

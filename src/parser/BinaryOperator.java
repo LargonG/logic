@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,11 +34,15 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before) {
-        if (before != null && before.priority >= operator.priority) {
-            return "(" + left.suffixString(operator) + operator + right.suffixString(operator) + ")";
+    public String suffixString(Operator before, boolean brackets) {
+        if (before != null && (before.priority > operator.priority || before == operator && brackets)) {
+            return "(" + left.suffixString(operator, !operator.leftAssoc)
+                    + operator
+                    + right.suffixString(operator, operator.leftAssoc) + ")";
         }
-        return left.suffixString(operator) + operator + right.suffixString(operator);
+        return left.suffixString(operator, !operator.leftAssoc)
+                + operator
+                + right.suffixString(operator, operator.leftAssoc);
     }
 
     @Override

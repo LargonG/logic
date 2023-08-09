@@ -35,19 +35,19 @@ public class Main {
         Parser parser = new Parser();
         for (int it = 0; it < testsCount; it++) {
             Expression before = generator.generate(2);
-            String expr = before.suffixString(null);
+            String expr = before.suffixString();
             Expression after = parser.parse(expr);
             if (before.toString().equals(after.toString())) {
                 System.out.println("OK");
                 System.out.println("Before: " + before);
                 System.out.println("After: " + after);
-                System.out.println("Suffix: " + before.suffixString(null));
+                System.out.println("Suffix: " + before.suffixString());
             } else {
                 System.out.println("ERROR!");
                 System.out.println("Before: " + before);
                 System.out.println("After: " + after);
-                System.out.println("Suffix before: " + before.suffixString(null));
-                System.out.println("Suffix after:  " + after.suffixString(null));
+                System.out.println("Suffix before: " + before.suffixString());
+                System.out.println("Suffix after:  " + after.suffixString());
                 break;
             }
         }

@@ -6,8 +6,9 @@ import resolver.Axioms;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
-public class MetaBuilder {
+public class MetaBuilder implements Builder<String, Proof> {
     private static final List<Integer> emptyList = new ArrayList<>();
     private final Parser parser;
 
@@ -15,7 +16,7 @@ public class MetaBuilder {
         this.parser = new Parser();
     }
 
-    public List<Proof> build(List<String> lines) {
+    public List<Proof> build(final List<String> lines) {
         List<Proof> proofs = new ArrayList<>(lines.size());
         Map<Expression, List<Integer>> rightPartOfImplication = new TreeMap<>();
         Map<Expression, List<Integer>> expressions = new TreeMap<>();
@@ -23,45 +24,36 @@ public class MetaBuilder {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             String[] ln = line.split("[|]-");
-            String[] unparsedHypotheses = ln[0].split(",");
+            List<Expression> hypothesesList = Arrays.stream(ln[0].split(","))
+                    .map(parser::parse)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-            Map<Expression, Integer> hypotheses = new TreeMap<>();
-            List<Expression> hypothesesList = new ArrayList<>(unparsedHypotheses.length);
-
-            for (String unparsedHypothesis : unparsedHypotheses) {
-                Expression hyp = parser.parse(unparsedHypothesis);
-                if (hyp == null) {
-                    continue;
-                }
-                hypotheses.merge(hyp, 1, Integer::sum);
-                hypothesesList.add(hyp);
-            }
-            Expression expr = parser.parse(ln[1]);
-
+            Proof current = new Proof(parser.parse(ln[1]), hypothesesList, i);
             Description comment = new Incorrect();
 
             // Axiom
             int axiomId;
-            if ((axiomId = Axioms.isAxiom(expr)) != -1) {
+            if ((axiomId = Axioms.isAxiom(current.expression)) != -1) {
                 comment = new AxiomScheme(axiomId);
             }
 
             // Hypothesis
             int hypothesisId = -1;
-            if (axiomId == -1 && (hypothesisId = hypothesesList.indexOf(expr)) != -1) {
+            if (axiomId == -1 && (hypothesisId = hypothesesList.indexOf(current.expression)) != -1) {
                 comment = new Hypothesis(hypothesisId);
             }
 
             // Modus Ponens
             int modus = -1, ponens = -1;
             if (axiomId == -1 && hypothesisId == -1) {
-                for (int implI : rightPartOfImplication.getOrDefault(expr, emptyList)) {
+                for (int implI : rightPartOfImplication.getOrDefault(current.expression, emptyList)) {
                     Proof implicationProof = proofs.get(implI);
                     BinaryOperator impl = (BinaryOperator) implicationProof.expression;
-                    if (implicationProof.context.equals(hypotheses)) {
+                    if (implicationProof.context.equals(current.context)) {
                         for (int ai : expressions.getOrDefault(impl.left, emptyList)) {
                             Proof alphaProof = proofs.get(ai);
-                            if (alphaProof.context.equals(hypotheses)) {
+                            if (alphaProof.context.equals(current.context)) {
                                 modus = ai;
                                 ponens = implI;
                                 comment = new ModusPonens(modus, ponens);
@@ -72,25 +64,12 @@ public class MetaBuilder {
             }
 
             // Deduction
-            Expression dedExpr = expr;
-            Map<Expression, Integer> dedHypotheses = new HashMap<>();
-            while (dedExpr instanceof BinaryOperator) {
-                BinaryOperator impl = (BinaryOperator) dedExpr;
-                if (!impl.operator.equals(Operator.IMPL)) {
-                    break;
-                }
-                dedExpr = impl.right;
-                dedHypotheses.merge(impl.left, 1, Integer::sum);
-            }
-            for (Map.Entry<Expression, Integer> hyp: hypotheses.entrySet()) {
-                dedHypotheses.merge(hyp.getKey(), hyp.getValue(), Integer::sum);
-            }
-
             int dedId = -1;
             if (axiomId == -1 && hypothesisId == -1 && modus == -1 && ponens == -1) {
                 for (int proofId = 0; proofId < proofs.size(); proofId++) {
                     Proof proof = proofs.get(proofId);
-                    if (proof.deductionExpression.equals(dedExpr) && proof.deductionContext.equals(dedHypotheses)) {
+                    if (proof.deductionExpression.equals(current.deductionExpression)
+                            && proof.deductionContext.equals(current.deductionContext)) {
                         dedId = proofId;
                         comment = new Deduction(dedId);
                         break;
@@ -105,16 +84,13 @@ public class MetaBuilder {
             BiFunction<List<Integer>, List<Integer>, List<Integer>>
                     mergeLists = (oldL, newL) -> {oldL.addAll(newL); return oldL;};
 
-
-            proofs.add(new Proof(expr, hypothesesList, hypotheses, dedExpr, dedHypotheses, i, comment, line));
-
-            if (expr instanceof BinaryOperator) {
-                BinaryOperator impl = (BinaryOperator) expr;
-                if (impl.operator.equals(Operator.IMPL)) {
-                    rightPartOfImplication.merge(impl.right, new ArrayList<Integer>() {{add(id);}}, mergeLists);
-                }
+            current.description = comment;
+            proofs.add(current);
+            List<Expression> impl = Expression.separate(current.expression, Operator.IMPL, 1);
+            if (impl.size() > 1) {
+                rightPartOfImplication.merge(impl.get(1), new ArrayList<Integer>() {{add(id);}}, mergeLists);
             }
-            expressions.merge(expr, new ArrayList<Integer>() {{add(id);}}, mergeLists);
+            expressions.merge(current.expression, new ArrayList<Integer>() {{add(id);}}, mergeLists);
         }
 
         return proofs;

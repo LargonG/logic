@@ -38,7 +38,7 @@ public class MetaGenerator {
                 put("b", expressionGenerator.generate(len));
                 put("c", expressionGenerator.generate(len));
                 put("y", expressionGenerator.generate(len));
-            }}).suffixString(null);
+            }}).suffixString();
             result[ai] = Proof.metaExpression(lines[ai], ai + 1, new AxiomScheme(ai));
             ai++;
         }

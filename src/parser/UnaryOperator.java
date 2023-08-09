@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,8 +29,8 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before) {
-        return operator.toString() + expr.suffixString(this.operator);
+    public String suffixString(Operator before, boolean brackets) {
+        return operator.toString() + expr.suffixString(this.operator, true);
     }
 
     @Override

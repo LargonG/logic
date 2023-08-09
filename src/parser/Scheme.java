@@ -21,7 +21,7 @@ public class Scheme implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before) {
+    public String suffixString(Operator before, boolean brackets) {
         return name;
     }
 
