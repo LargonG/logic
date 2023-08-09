@@ -1,5 +1,6 @@
 import builder.MetaBuilder;
 import builder.Proof;
+import builder.RealBuilder;
 import generator.Generator;
 import generator.MetaGenerator;
 import parser.*;
@@ -24,9 +25,14 @@ public class Main {
             }
             input.add(line);
         }
-        List<Proof> result = new MetaBuilder().build(input);
-        for (Proof res : result) {
-            System.out.println(res);
+        List<Proof> proofs = new MetaBuilder().build(input);
+        for (Proof proof : proofs) {
+            System.out.println(proof);
+        }
+        List<Expression> realProofs = new RealBuilder().build(proofs);
+        System.out.println(proofs.get(proofs.size() - 1).getExpressionString());
+        for (Expression expr: realProofs) {
+            System.out.println(expr.suffixString());
         }
     }
 

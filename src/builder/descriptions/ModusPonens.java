@@ -3,8 +3,8 @@ package builder.descriptions;
 import builder.descriptions.Description;
 
 public class ModusPonens implements Description {
-    private final int alpha;
-    private final int alphaImplBetta;
+    public final int alpha;
+    public final int alphaImplBetta;
 
     public ModusPonens(int alpha, int alphaImplBetta) {
         this.alpha = alpha;

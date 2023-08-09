@@ -47,7 +47,7 @@ public class Proof {
                             Integer::sum));
     }
 
-    private String getExpressionString() {
+    public String getExpressionString() {
         if (expressionString == null) {
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < contextList.size(); i++) {

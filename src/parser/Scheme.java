@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Scheme implements Expression {
+    private static final Parser parser = new Parser();
+
     public final String name;
 
     public Scheme(String name) {
@@ -50,5 +52,9 @@ public class Scheme implements Expression {
             return name.compareTo(sh.name);
         }
         return 1;
+    }
+
+    public static Expression create(String expression, Map<String, Expression> values) {
+        return parser.parse(expression).paste(values);
     }
 }
