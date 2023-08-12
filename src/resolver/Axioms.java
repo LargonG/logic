@@ -1,29 +1,33 @@
 package resolver;
 
-import parser.*;
+import parser.Expression;
+import parser.Parser;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class Axioms {
     private static final Parser parser;
 
-    public static final Set<Expression> values;
+    public static final List<Expression> values;
 
     private static final Resolver resolver;
 
     static {
         parser = new Parser();
-        values = new LinkedHashSet<Expression>() {{
-            add(parser.parse("a->b->a"));
-            add(parser.parse("(a->b)->(a->b->c)->(a->c)"));
-            add(parser.parse("a->b->a&b"));
-            add(parser.parse("a&b->a"));
-            add(parser.parse("a&b->b"));
-            add(parser.parse("a->a|b"));
-            add(parser.parse("b->a|b"));
-            add(parser.parse("(a->y)->(b->y)->(a|b->y)"));
-            add(parser.parse("(a->b)->(a->!b)->!a"));
-            add(parser.parse("!!a->a"));
+        values = new ArrayList<Expression>() {{
+            add(parser.parse("a->b->a"));                   // 0
+            add(parser.parse("(a->b)->(a->b->c)->(a->c)")); // 1
+            add(parser.parse("a->b->a&b"));                 // 2
+            add(parser.parse("a&b->a"));                    // 3
+            add(parser.parse("a&b->b"));                    // 4
+            add(parser.parse("a->a|b"));                    // 5
+            add(parser.parse("b->a|b"));                    // 6
+            add(parser.parse("(a->y)->(b->y)->(a|b->y)"));  // 7
+            add(parser.parse("(a->b)->(a->!b)->!a"));       // 8
+            add(parser.parse("!!a->a"));                    // 9
         }};
         resolver = new Resolver();
     }
@@ -42,5 +46,9 @@ public final class Axioms {
             i++;
         }
         return -1;
+    }
+
+    public static Expression createByAxiom(int axiomId, Map<String, Expression> substitution) {
+        return values.get(axiomId).paste(substitution);
     }
 }

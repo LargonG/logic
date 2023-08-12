@@ -1,6 +1,5 @@
 package generator;
 
-import builder.MetaBuilder;
 import builder.Proof;
 import builder.descriptions.AxiomScheme;
 import parser.Expression;
@@ -28,7 +27,7 @@ public class MetaGenerator {
         this.expressionGenerator = new Generator();
     }
 
-    public Test generate(int len) {
+    public Test generateAxioms(int len) {
         String[] lines = new String[Axioms.values.size()];
         String[] result = new String[Axioms.values.size()];
         int ai = 0;

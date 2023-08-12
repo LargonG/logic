@@ -1,7 +1,6 @@
 package parser;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ public interface Expression extends Comparable<Expression> {
 
     static Expression create(Operator operator, Expression left, Expression right) {
         if (operator == null) {
-            assert left != null || right != null;
             assert left == null || right == null;
             return left != null ? left : right;
         }

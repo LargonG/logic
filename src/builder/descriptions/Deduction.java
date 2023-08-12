@@ -1,14 +1,29 @@
 package builder.descriptions;
 
-public class Deduction implements Description {
-    public final int id;
+import builder.Proof;
 
-    public Deduction(int id) {
-        this.id = id;
+import java.util.Collections;
+import java.util.List;
+
+public class Deduction implements Description {
+    public final Proof proof;
+
+    public Deduction(final Proof proof) {
+        this.proof = proof;
+    }
+
+    public Deduction(final List<Proof> proofs,
+                     final int id) {
+        this.proof = proofs.get(id);
     }
 
     @Override
     public String toString() {
-        return "Ded. " + (id + 1);
+        return "Ded. " + (proof.getId() + 1);
+    }
+
+    @Override
+    public List<Proof> getLinks() {
+        return Collections.singletonList(proof);
     }
 }

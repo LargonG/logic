@@ -1,7 +1,10 @@
 package builder;
 
 import builder.descriptions.*;
-import parser.*;
+import parser.BinaryOperator;
+import parser.Expression;
+import parser.Operator;
+import parser.Parser;
 import resolver.Axioms;
 
 import java.util.*;
@@ -9,7 +12,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class MetaBuilder implements Builder<String, Proof> {
-    private static final List<Integer> emptyList = new ArrayList<>();
     private final Parser parser;
 
     public MetaBuilder() {
@@ -47,16 +49,16 @@ public class MetaBuilder implements Builder<String, Proof> {
             // Modus Ponens
             int modus = -1, ponens = -1;
             if (axiomId == -1 && hypothesisId == -1) {
-                for (int implI : rightPartOfImplication.getOrDefault(current.expression, emptyList)) {
+                for (int implI : rightPartOfImplication.getOrDefault(current.expression, Collections.emptyList())) {
                     Proof implicationProof = proofs.get(implI);
                     BinaryOperator impl = (BinaryOperator) implicationProof.expression;
-                    if (implicationProof.context.equals(current.context)) {
-                        for (int ai : expressions.getOrDefault(impl.left, emptyList)) {
+                    if (implicationProof.getContext().equals(current.getContext())) {
+                        for (int ai : expressions.getOrDefault(impl.left, Collections.emptyList())) {
                             Proof alphaProof = proofs.get(ai);
-                            if (alphaProof.context.equals(current.context)) {
+                            if (alphaProof.getContext().equals(current.getContext())) {
                                 modus = ai;
                                 ponens = implI;
-                                comment = new ModusPonens(modus, ponens);
+                                comment = new ModusPonens(proofs, modus, ponens);
                             }
                         }
                     }
@@ -68,10 +70,10 @@ public class MetaBuilder implements Builder<String, Proof> {
             if (axiomId == -1 && hypothesisId == -1 && modus == -1 && ponens == -1) {
                 for (int proofId = 0; proofId < proofs.size(); proofId++) {
                     Proof proof = proofs.get(proofId);
-                    if (proof.deductionExpression.equals(current.deductionExpression)
-                            && proof.deductionContext.equals(current.deductionContext)) {
+                    if (proof.getDeductionExpression().equals(current.getDeductionExpression())
+                            && proof.getDeductionContext().equals(current.getDeductionContext())) {
                         dedId = proofId;
-                        comment = new Deduction(dedId);
+                        comment = new Deduction(proofs, dedId);
                         break;
                     }
                 }
@@ -88,9 +90,9 @@ public class MetaBuilder implements Builder<String, Proof> {
             proofs.add(current);
             List<Expression> impl = Expression.separate(current.expression, Operator.IMPL, 1);
             if (impl.size() > 1) {
-                rightPartOfImplication.merge(impl.get(1), new ArrayList<Integer>() {{add(id);}}, mergeLists);
+                rightPartOfImplication.merge(impl.get(1), new ArrayList<>(Collections.singletonList(id)), mergeLists);
             }
-            expressions.merge(current.expression, new ArrayList<Integer>() {{add(id);}}, mergeLists);
+            expressions.merge(current.expression, new ArrayList<>(Collections.singletonList(id)), mergeLists);
         }
 
         return proofs;

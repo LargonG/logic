@@ -7,6 +7,10 @@ public class Hypothesis implements Description {
         this.id = id;
     }
 
+    public Hypothesis() {
+        this.id = -1;
+    }
+
     @Override
     public String toString() {
         return "Hyp. " + (id + 1);

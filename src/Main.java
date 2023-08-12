@@ -1,21 +1,20 @@
 import builder.MetaBuilder;
 import builder.Proof;
 import builder.RealBuilder;
+import builder.descriptions.Deduction;
+import builder.descriptions.Incorrect;
 import generator.Generator;
 import generator.MetaGenerator;
 import parser.*;
-import resolver.Axioms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
-        // checkAxioms(100, 2);
-        // test(100000);
-        // System.out.println("End testing");
         Scanner scanner = new Scanner(System.in);
         List<String> input = new ArrayList<>();
         while (scanner.hasNext()) {
@@ -26,13 +25,19 @@ public class Main {
             input.add(line);
         }
         List<Proof> proofs = new MetaBuilder().build(input);
-        for (Proof proof : proofs) {
-            System.out.println(proof);
-        }
-        List<Expression> realProofs = new RealBuilder().build(proofs);
-        System.out.println(proofs.get(proofs.size() - 1).getExpressionString());
-        for (Expression expr: realProofs) {
-            System.out.println(expr.suffixString());
+//        for (Proof proof : proofs) {
+//            System.out.println(proof);
+//        }
+        Proof proof = proofs.get(proofs.size() - 1);
+        String contextString = proof
+                .getContextList()
+                .stream()
+                .map(Expression::suffixString)
+                .reduce((left, right) -> left + "," + right).orElse("");
+        System.out.println(contextString + "|-" + proofs.get(proofs.size() - 1).expression.suffixString());
+        List<Expression> expressions = new RealBuilder().build(proofs);
+        for (Expression expression: expressions) {
+            System.out.println(expression.suffixString());
         }
     }
 
@@ -56,6 +61,31 @@ public class Main {
                 System.out.println("Suffix after:  " + after.suffixString());
                 break;
             }
+        }
+    }
+
+    public static void testMeta() {
+        MetaGenerator generator = new MetaGenerator();
+        MetaGenerator.Test test = generator.generateAxioms(1);
+        List<Proof> proofs = new MetaBuilder().build(Arrays.asList(test.lines));
+        for (Proof proof : proofs) {
+            System.out.println(proof);
+        }
+        String contextString = proofs.get(proofs.size() - 1)
+                .getContextList()
+                .stream()
+                .map(Expression::suffixString)
+                .reduce((left, right) -> left + "," + right).orElse("");
+        List<Expression> expressions = new RealBuilder().build(proofs);
+        checkRealExpression(expressions, contextString);
+    }
+
+    public static void checkRealExpression(List<Expression> expressions, String contextString) {
+        List<String> lines = expressions.stream()
+                .map(expression -> contextString + "|-" + expression.suffixString()).collect(Collectors.toList());
+        List<Proof> check = new MetaBuilder().build(lines);
+        for (Proof p: check) {
+            assert !(p.description instanceof Deduction || p.description instanceof Incorrect);
         }
     }
 }

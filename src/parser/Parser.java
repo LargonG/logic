@@ -54,7 +54,6 @@ public class Parser {
 
             // oldOp.prior <= op.prior
             assert symbol == ')' || newOp != null;
-            assert oldOp != null || symbol == ')';
             if (symbol == ')' || oldOp != null && (newOp.priority < oldOp.priority || (newOp == oldOp && newOp.leftAssoc))) {
                 if (!(symbol == ')' && oldOp == null)) tail.back();
                 return Expression.create(op, left, right);
