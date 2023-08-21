@@ -9,6 +9,9 @@ import parser.Operator;
 
 import java.util.*;
 
+/**
+ * Creates the real proof of expression ("unpacks" meta proof)
+ */
 public class RealBuilder implements Builder<Proof, Expression> {
     private static class DeductionSteps {
         private final List<Expression> left;
@@ -34,28 +37,29 @@ public class RealBuilder implements Builder<Proof, Expression> {
                 Proof metaAfter = proofs.get(i);
                 if (metaAfter.description instanceof AxiomScheme
                 || metaAfter.description instanceof Hypothesis) {
-                    // просто добавляем
                     realAfter = metaAfter;
                 } else if (metaAfter.description instanceof ModusPonens) {
                     ModusPonens modusPonens = (ModusPonens) metaAfter.description;
-                    realAfter = new Proof(metaAfter.expression, new ModusPonens(
-                            real.get(modusPonens.alpha.getId()),
-                            real.get(modusPonens.alphaImplBetta.getId())
-                    ));
+                    realAfter = new Proof(
+                            metaAfter.expression,
+                            new ModusPonens(
+                                    real.get(modusPonens.alpha.getId()),            // alpha
+                                    real.get(modusPonens.alphaImplBetta.getId())    // alpha -> betta
+                            )
+                    );
                 } else if (metaAfter.description instanceof Deduction) {
-                    Proof metaBefore = ((Deduction) metaAfter.description).proof;
-                    Proof realBefore = real.get(metaBefore.getId());
-                    Map<Expression, Integer> context = new HashMap<>(metaBefore.getContext());
+                    Proof metaBefore = (((Deduction) metaAfter.description).proof);
 
                     DeductionSteps steps = getDeductionSteps(metaBefore, metaAfter);
 
-                    realAfter = realBefore;
+                    Map<Expression, Integer> context = new HashMap<>(metaBefore.getContext());
+                    realAfter = real.get(metaBefore.getId());
                     for (Expression left: steps.left) {
+                        // G |- a -> b => G, a |- b
                         context.merge(left, 1, Integer::sum);
                         realAfter = realAfter.deductionLeft(left);
                     }
 
-                    assert steps.subExpression.equals(realAfter.expression);
                     for (Expression right: steps.right) {
                         context.merge(right, -1, Integer::sum);
                         realAfter = realAfter.deductionRight(context, right);
@@ -68,9 +72,58 @@ public class RealBuilder implements Builder<Proof, Expression> {
         }
 
         List<Expression> result = new ArrayList<>();
-        real.get(real.size() - 1).getExpressionList(result);
+        Set<Expression> used = new HashSet<>();
+        real.get(real.size() - 1).getExpressionList(result, used);
         return result;
     }
+
+    // don't want to delete...
+//    public List<Expression> build1(final List<Proof> proofs) {
+//        List<Proof> real = new ArrayList<>(proofs.size());
+//        Set<Integer> useful = getUseful(proofs.get(proofs.size() - 1));
+//        for (int i = 0; i < proofs.size(); i++) {
+//            Proof realAfter = null;
+//            if (useful.contains(i)) {
+//                Proof metaAfter = proofs.get(i);
+//                if (metaAfter.description instanceof AxiomScheme
+//                || metaAfter.description instanceof Hypothesis) {
+//                    // просто добавляем
+//                    realAfter = metaAfter;
+//                } else if (metaAfter.description instanceof ModusPonens) {
+//                    ModusPonens modusPonens = (ModusPonens) metaAfter.description;
+//                    realAfter = new Proof(metaAfter.expression, new ModusPonens(
+//                            real.get(modusPonens.alpha.getId()),
+//                            real.get(modusPonens.alphaImplBetta.getId())
+//                    ));
+//                } else if (metaAfter.description instanceof Deduction) {
+//                    Proof metaBefore = ((Deduction) metaAfter.description).proof;
+//                    Proof realBefore = real.get(metaBefore.getId());
+//                    Map<Expression, Integer> context = new HashMap<>(metaBefore.getContext());
+//
+//                    DeductionSteps steps = getDeductionSteps(metaBefore, metaAfter);
+//
+//                    realAfter = realBefore;
+//                    for (Expression left: steps.left) {
+//                        context.merge(left, 1, Integer::sum);
+//                        realAfter = realAfter.deductionLeft(left);
+//                    }
+//
+//                    assert steps.subExpression.equals(realAfter.expression);
+//                    for (Expression right: steps.right) {
+//                        context.merge(right, -1, Integer::sum);
+//                        realAfter = realAfter.deductionRight(context, right);
+//                    }
+//                } else {
+//                    throw new IllegalArgumentException("Description is incorrect!");
+//                }
+//            }
+//            real.add(realAfter);
+//        }
+//
+//        List<Expression> result = new ArrayList<>();
+//        real.get(real.size() - 1).getExpressionList(result);
+//        return result;
+//    }
 
     //    @Override
 //    public List<Expression> build(final List<Proof> proofs) {

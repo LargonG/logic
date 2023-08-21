@@ -27,6 +27,11 @@ public class MetaGenerator {
         this.expressionGenerator = new Generator();
     }
 
+    /**
+     * Creates one expression for each axiom
+     * @param len -- length of the binary operator expression
+     * @return generated axioms strings & it's proof representation
+     */
     public Test generateAxioms(int len) {
         String[] lines = new String[Axioms.values.size()];
         String[] result = new String[Axioms.values.size()];

@@ -1,5 +1,8 @@
 package builder.descriptions;
 
+/**
+ * Proof is hypothesis
+ */
 public class Hypothesis implements Description {
     public final int id;
 

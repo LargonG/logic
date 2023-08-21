@@ -5,6 +5,33 @@ import parser.*;
 import java.util.Map;
 
 public class Resolver {
+    /**
+     * Сравнивает структуру выражений:
+     * если оно одинаковое, то возвращает <code>true</code>,
+     * иначе -- <code>false</code>
+     * <br>
+     * Пример: <br>
+     * BinOp == BinaryOperator <br>
+     * UnOp == UnaryOperator <br>
+     * <br>
+     * expression = BinOp(AND, Var(A), Var(B)) <br>
+     * scheme = BinOp(AND, Scheme(a), Scheme(b)) <br>
+     * returns true <br>
+     * <br>
+     * expression = BinOp(AND, Var(A), Var(B)) <br>
+     * scheme = Scheme(a) <br>
+     * returns true <br>
+     * <br>
+     * expression = BinOp(OR, Var(A), Var(B)) <br>
+     * scheme = BinOp(AND, Var(A), Var(B)) <br>
+     * returns false <br>
+     *
+     *
+     * @param expression -- выражение, которое должно соответствовать определённой структуре
+     * @param scheme -- выражение с эталонной структурой
+     * @param memes -- scheme -> expression
+     * @return true, if structure of <code>expression</code> is equals to <code>scheme</code> structure
+     */
     public boolean resolve(Expression expression, Expression scheme, Map<String, Expression> memes) {
         if (expression instanceof BinaryOperator && scheme instanceof BinaryOperator) {
             BinaryOperator expr = (BinaryOperator) expression;

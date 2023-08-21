@@ -3,6 +3,7 @@ import builder.Proof;
 import builder.RealBuilder;
 import builder.descriptions.Deduction;
 import builder.descriptions.Incorrect;
+import builder.descriptions.ModusPonens;
 import generator.Generator;
 import generator.MetaGenerator;
 import parser.*;
@@ -14,7 +15,14 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
+    /**
+     * Сейчас данная программа решает задачу C:
+     * по введённому корректному доказательству
+     * оно строит полное доказательство
+     * @param args
+     */
     public static void main(String[] args) {
+//        testMeta(10000);
         Scanner scanner = new Scanner(System.in);
         List<String> input = new ArrayList<>();
         while (scanner.hasNext()) {
@@ -25,20 +33,20 @@ public class Main {
             input.add(line);
         }
         List<Proof> proofs = new MetaBuilder().build(input);
-//        for (Proof proof : proofs) {
-//            System.out.println(proof);
-//        }
+        for (Proof proof : proofs) {
+            System.out.println(proof);
+        }
         Proof proof = proofs.get(proofs.size() - 1);
-        String contextString = proof
-                .getContextList()
-                .stream()
-                .map(Expression::suffixString)
-                .reduce((left, right) -> left + "," + right).orElse("");
+        String contextString = joinContext(proof.getContextList());
+        if (proof.description instanceof ModusPonens) {
+            contextString = joinContext(((ModusPonens) proof.description).alpha.getContextList());
+        }
         System.out.println(contextString + "|-" + proofs.get(proofs.size() - 1).expression.suffixString());
         List<Expression> expressions = new RealBuilder().build(proofs);
         for (Expression expression: expressions) {
             System.out.println(expression.suffixString());
         }
+        checkRealExpression(expressions, contextString);
     }
 
     public static void test(int testsCount) {
@@ -64,28 +72,40 @@ public class Main {
         }
     }
 
-    public static void testMeta() {
+    public static void testMeta(int tests) {
         MetaGenerator generator = new MetaGenerator();
-        MetaGenerator.Test test = generator.generateAxioms(1);
-        List<Proof> proofs = new MetaBuilder().build(Arrays.asList(test.lines));
-        for (Proof proof : proofs) {
-            System.out.println(proof);
+        for (int i = 0; i < tests; i++) {
+            MetaGenerator.Test test = generator.generateAxioms(1);
+            List<Proof> proofs = new MetaBuilder().build(Arrays.asList(test.lines));
+            for (Proof proof : proofs) {
+                System.out.println(proof);
+            }
+            String contextString = proofs.get(proofs.size() - 1)
+                    .getContextList()
+                    .stream()
+                    .map(Expression::suffixString)
+                    .reduce((left, right) -> left + "," + right).orElse("");
+            List<Expression> expressions = new RealBuilder().build(proofs);
+            checkRealExpression(expressions, contextString);
         }
-        String contextString = proofs.get(proofs.size() - 1)
-                .getContextList()
-                .stream()
-                .map(Expression::suffixString)
-                .reduce((left, right) -> left + "," + right).orElse("");
-        List<Expression> expressions = new RealBuilder().build(proofs);
-        checkRealExpression(expressions, contextString);
     }
 
     public static void checkRealExpression(List<Expression> expressions, String contextString) {
+        assert !expressions.isEmpty();
         List<String> lines = expressions.stream()
                 .map(expression -> contextString + "|-" + expression.suffixString()).collect(Collectors.toList());
         List<Proof> check = new MetaBuilder().build(lines);
         for (Proof p: check) {
-            assert !(p.description instanceof Deduction || p.description instanceof Incorrect);
+            if (p.description instanceof Deduction || p.description instanceof Incorrect) {
+                throw new RuntimeException();
+            }
         }
     }
+
+    public static String joinContext(List<Expression> context) {
+        return context.stream()
+                .map(Expression::suffixString)
+                .reduce((left, right) -> left + "," + right).orElse("");
+    }
+
 }

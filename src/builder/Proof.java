@@ -8,10 +8,15 @@ import parser.Scheme;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Proof, that equals to: <br>
+ * {context} |- {expression} [description]
+ */
 public class Proof {
     public final Expression expression;
     private final List<Expression> contextList;
@@ -85,18 +90,15 @@ public class Proof {
             put("a", alpha);
             put("b", expression);
         }};
-
         if (description instanceof AxiomScheme || context.getOrDefault(expression, 0) > 0) {
-            //
-            // d -> a -> d
-            // d
-            // a -> d
-            assert description instanceof AxiomScheme || description instanceof Hypothesis;
             return new Proof(
-                    Scheme.create("a->b", mp), // b
+                    Scheme.create("a->b", mp),
                     new ModusPonens(
-                            this, // a
-                            new Proof(Scheme.create("b->a->b", mp), new AxiomScheme(0)) // a -> b
+                            this,
+                            new Proof(
+                                    Scheme.create("b->a->b", mp),
+                                    new AxiomScheme(0)
+                            )
                     )
             );
         } else if (alpha.equals(expression)) {
@@ -107,37 +109,37 @@ public class Proof {
                                     Scheme.create("a->(a->a)->a", mp),
                                     new AxiomScheme(0)),
                             new Proof(
-                                    Scheme.create("(a->(a->a)->a)->a->a", mp),
+                                    Scheme.create("(a->(a->a)->a)->(a->a)", mp),
                                     new ModusPonens(
                                             new Proof(
                                                     Scheme.create("a->a->a", mp),
                                                     new AxiomScheme(0)),
                                             new Proof(
-                                                    Scheme.create("(a->a->a)->(a->(a->a)->a)->a->a", mp),
+                                                    Scheme.create("(a->a->a)->(a->(a->a)->a)->(a->a)", mp),
                                                     new AxiomScheme(1))
-                                    ))
+                                    )
+                            )
                     )
             );
         } else {
-            // Modus Ponens
             assert description instanceof ModusPonens;
-            ModusPonens modusPonens = (ModusPonens) description;
-            Proof updModusAlpha = modusPonens.alpha.deductionRight(context, alpha);
-            Proof updModusAlphaImplBetta = modusPonens.alphaImplBetta.deductionRight(context, alpha);
 
-            // (a -> d) -> (a -> d -> b) -> (a -> b)
-            // a -> (d)
-            // a -> (d -> b)
-            mp.put("d", updModusAlpha.expression);
-            mp.put("f", updModusAlphaImplBetta.expression);
+            ModusPonens modusPonens = (ModusPonens) description;
+
+            Proof updModus = modusPonens.alpha.deductionRight(context, alpha);
+            Proof updPonens = modusPonens.alphaImplBetta.deductionRight(context, alpha);
+
+            mp.put("d", updModus.expression);
+            mp.put("f", updPonens.expression);
+
             return new Proof(
                     Scheme.create("a->b", mp),
                     new ModusPonens(
-                            updModusAlphaImplBetta,
+                            updPonens,
                             new Proof(
                                     Scheme.create("f->(a->b)", mp),
                                     new ModusPonens(
-                                            updModusAlpha,
+                                            updModus,
                                             new Proof(
                                                     Scheme.create("d->f->(a->b)", mp),
                                                     new AxiomScheme(1)
@@ -149,12 +151,89 @@ public class Proof {
         }
     }
 
-    public void getExpressionList(final List<Expression> result) {
+    // old code, I don't want to delete it, and yes, I use git
+//    public Proof deductionRight(Map<Expression, Integer> context, Expression alpha) {
+//        Map<String, Expression> mp = new HashMap<String, Expression>() {{
+//            put("a", alpha);
+//            put("b", expression);
+//        }};
+//
+//        if (description instanceof AxiomScheme || context.getOrDefault(expression, 0) > 0) {
+//            //
+//            // d -> a -> d
+//            // d
+//            // a -> d
+//            assert description instanceof AxiomScheme || description instanceof Hypothesis;
+//            return new Proof(
+//                    Scheme.create("a->b", mp), // b
+//                    new ModusPonens(
+//                            this, // a
+//                            new Proof(Scheme.create("b->a->b", mp), new AxiomScheme(0)) // a -> b
+//                    )
+//            );
+//        } else if (alpha.equals(expression)) {
+//            return new Proof(
+//                    Scheme.create("a->a", mp),
+//                    new ModusPonens(
+//                            new Proof(
+//                                    Scheme.create("a->(a->a)->a", mp),
+//                                    new AxiomScheme(0)),
+//                            new Proof(
+//                                    Scheme.create("(a->(a->a)->a)->a->a", mp),
+//                                    new ModusPonens(
+//                                            new Proof(
+//                                                    Scheme.create("a->a->a", mp),
+//                                                    new AxiomScheme(0)),
+//                                            new Proof(
+//                                                    Scheme.create("(a->a->a)->(a->(a->a)->a)->a->a", mp),
+//                                                    new AxiomScheme(1))
+//                                    ))
+//                    )
+//            );
+//        } else {
+//            // Modus Ponens
+//            assert description instanceof ModusPonens;
+//            ModusPonens modusPonens = (ModusPonens) description;
+//            Proof updModusAlpha = modusPonens.alpha.deductionRight(context, alpha);
+//            Proof updModusAlphaImplBetta = modusPonens.alphaImplBetta.deductionRight(context, alpha);
+//
+//            // (a -> d) -> (a -> d -> b) -> (a -> b)
+//            // a -> (d)
+//            // a -> (d -> b)
+//            mp.put("d", updModusAlpha.expression);
+//            mp.put("f", updModusAlphaImplBetta.expression);
+//            return new Proof(
+//                    Scheme.create("a->b", mp),
+//                    new ModusPonens(
+//                            updModusAlphaImplBetta,
+//                            new Proof(
+//                                    Scheme.create("f->(a->b)", mp),
+//                                    new ModusPonens(
+//                                            updModusAlpha,
+//                                            new Proof(
+//                                                    Scheme.create("d->f->(a->b)", mp),
+//                                                    new AxiomScheme(1)
+//                                            )
+//                                    )
+//                            )
+//                    )
+//            );
+//        }
+//    }
+
+    public void getExpressionList(final List<Expression> result,
+                                  final Set<Expression> used) {
         List<Proof> links = description.getLinks();
         for (Proof link: links) {
-            link.getExpressionList(result);
+            if (!used.contains(link.expression)) {
+                link.getExpressionList(result, used);
+            }
         }
-        result.add(expression);
+
+        if (!used.contains(expression)) {
+            used.add(expression);
+            result.add(expression);
+        }
     }
 
 

@@ -5,6 +5,9 @@ import builder.Proof;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Proof is built by deduction
+ */
 public class Deduction implements Description {
     public final Proof proof;
 

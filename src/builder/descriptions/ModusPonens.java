@@ -5,6 +5,9 @@ import builder.Proof;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Proof is built by the rule "modus ponens"
+ */
 public class ModusPonens implements Description {
     public final Proof alpha;
     public final Proof alphaImplBetta;

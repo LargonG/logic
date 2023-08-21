@@ -11,6 +11,9 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
+/**
+ * Builds meta proof (adds description)
+ */
 public class MetaBuilder implements Builder<String, Proof> {
     private final Parser parser;
 

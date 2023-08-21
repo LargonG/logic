@@ -1,5 +1,8 @@
 package builder.descriptions;
 
+/**
+ * Proof is axiom (and what scheme is used (index of scheme))
+ */
 public class AxiomScheme implements Description {
     public final int id;
 

@@ -15,6 +15,12 @@ public class Generator {
         this.random = new Random();
     }
 
+    /**
+     * Generate expression, which structure is: <br>
+     * binOp(binOp(binOp(...), binOp()), binOp())
+     * @param k -- number of binary operations (k > 0)
+     * @return binOp(binOp(binOp(...), binOp()), binOp()) which deep is k
+     */
     public Expression generate(int k) {
         Expression left = new BinaryOperator(chooseOperator(3), createUnary(), createUnary());
         for (int i = 0; i < k; i++) {
