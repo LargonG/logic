@@ -47,8 +47,4 @@ public final class Axioms {
         }
         return -1;
     }
-
-    public static Expression createByAxiom(int axiomId, Map<String, Expression> substitution) {
-        return values.get(axiomId).paste(substitution);
-    }
 }
