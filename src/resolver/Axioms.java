@@ -1,6 +1,6 @@
 package resolver;
 
-import parser.Expression;
+import grammar.Expression;
 import parser.Parser;
 
 import java.util.ArrayList;

@@ -1,5 +1,10 @@
 package parser;
 
+import grammar.Expression;
+import grammar.Operator;
+import grammar.Scheme;
+import grammar.Variable;
+
 public class Parser {
     public Expression parse(String expression) {
         return parseExpression(null, null, null, new StringIndexer(expression));

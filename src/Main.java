@@ -6,6 +6,7 @@ import builder.descriptions.Incorrect;
 import builder.descriptions.ModusPonens;
 import generator.Generator;
 import generator.MetaGenerator;
+import grammar.Expression;
 import parser.*;
 
 import java.util.ArrayList;

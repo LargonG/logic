@@ -1,4 +1,4 @@
-package parser;
+package grammar;
 
 import java.util.HashMap;
 import java.util.Map;

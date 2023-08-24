@@ -1,6 +1,6 @@
 package resolver;
 
-import parser.*;
+import grammar.*;
 
 import java.util.Map;
 

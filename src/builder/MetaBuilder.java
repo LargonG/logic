@@ -1,9 +1,9 @@
 package builder;
 
 import builder.descriptions.*;
-import parser.BinaryOperator;
-import parser.Expression;
-import parser.Operator;
+import grammar.BinaryOperator;
+import grammar.Expression;
+import grammar.Operator;
 import parser.Parser;
 import resolver.Axioms;
 

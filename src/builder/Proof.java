@@ -1,9 +1,9 @@
 package builder;
 
 import builder.descriptions.*;
-import parser.Expression;
-import parser.Operator;
-import parser.Scheme;
+import grammar.Expression;
+import grammar.Operator;
+import grammar.Scheme;
 
 import java.util.HashMap;
 import java.util.List;

@@ -1,6 +1,6 @@
 package generator;
 
-import parser.*;
+import grammar.*;
 
 import java.util.Random;
 

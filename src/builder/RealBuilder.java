@@ -4,8 +4,8 @@ import builder.descriptions.AxiomScheme;
 import builder.descriptions.Deduction;
 import builder.descriptions.Hypothesis;
 import builder.descriptions.ModusPonens;
-import parser.Expression;
-import parser.Operator;
+import grammar.Expression;
+import grammar.Operator;
 
 import java.util.*;
 

@@ -1,4 +1,6 @@
-package parser;
+package grammar;
+
+import parser.Parser;
 
 import java.util.Map;
 import java.util.Objects;

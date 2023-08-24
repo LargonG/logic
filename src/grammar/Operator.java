@@ -1,4 +1,4 @@
-package parser;
+package grammar;
 
 public enum Operator {
     IMPL(2, false, false),

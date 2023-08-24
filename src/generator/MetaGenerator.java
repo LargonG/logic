@@ -2,7 +2,7 @@ package generator;
 
 import builder.Proof;
 import builder.descriptions.AxiomScheme;
-import parser.Expression;
+import grammar.Expression;
 import parser.Parser;
 import resolver.Axioms;
 
