@@ -1,10 +1,10 @@
 package grammar.operators;
 
-import builder.descriptions.natural.Rule;
-import builder.proof.Context;
-import builder.proof.NProof;
-import builder.proof.PreProof;
-import builder.proof.Proof;
+import grammar.descriptions.natural.Rule;
+import grammar.proof.Context;
+import grammar.proof.NProof;
+import grammar.proof.PreProof;
+import grammar.proof.Proof;
 import grammar.Expression;
 import grammar.Nil;
 

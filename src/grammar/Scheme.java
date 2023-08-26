@@ -1,7 +1,7 @@
 package grammar;
 
-import builder.proof.Context;
-import builder.proof.NProof;
+import grammar.proof.Context;
+import grammar.proof.NProof;
 import grammar.operators.Operator;
 import parser.ExpressionParser;
 

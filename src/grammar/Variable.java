@@ -1,11 +1,10 @@
 package grammar;
 
-import builder.descriptions.natural.NaturalDescription;
-import builder.proof.Context;
-import builder.proof.NProof;
+import grammar.descriptions.natural.NaturalDescription;
+import grammar.proof.Context;
+import grammar.proof.NProof;
 import grammar.operators.Operator;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;

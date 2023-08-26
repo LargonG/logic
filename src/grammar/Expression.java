@@ -1,8 +1,7 @@
 package grammar;
 
-import builder.proof.Context;
-import builder.proof.NProof;
-import builder.proof.Proof;
+import grammar.proof.Context;
+import grammar.proof.NProof;
 import grammar.operators.Operator;
 
 import java.util.*;

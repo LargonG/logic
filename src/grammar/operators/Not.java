@@ -1,7 +1,7 @@
 package grammar.operators;
 
-import builder.proof.NProof;
-import builder.proof.Proof;
+import grammar.proof.NProof;
+import grammar.proof.Proof;
 import grammar.Expression;
 
 public class Not implements Bundle {

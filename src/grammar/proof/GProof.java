@@ -1,7 +1,7 @@
-package builder.proof;
+package grammar.proof;
 
-import builder.descriptions.Description;
-import builder.descriptions.gilbert.*;
+import grammar.descriptions.Description;
+import grammar.descriptions.gilbert.*;
 import grammar.BinaryOperator;
 import grammar.Expression;
 import grammar.Scheme;

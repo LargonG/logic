@@ -1,4 +1,4 @@
-package builder.proof;
+package grammar.proof;
 
 import grammar.Expression;
 import grammar.operators.Operator;

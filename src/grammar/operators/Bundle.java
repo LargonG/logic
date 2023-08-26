@@ -1,14 +1,8 @@
 package grammar.operators;
 
-import builder.descriptions.natural.Rule;
-import builder.proof.*;
+import grammar.proof.*;
 import grammar.BinaryOperator;
 import grammar.Expression;
-import grammar.Nil;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
 
 public interface Bundle {
     NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);

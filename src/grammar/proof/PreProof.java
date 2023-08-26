@@ -1,7 +1,7 @@
-package builder.proof;
+package grammar.proof;
 
-import builder.descriptions.natural.NaturalDescription;
-import builder.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalDescription;
+import grammar.descriptions.natural.Rule;
 import grammar.Expression;
 
 import java.util.Arrays;

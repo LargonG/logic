@@ -1,4 +1,4 @@
-package builder.descriptions.natural;
+package grammar.descriptions.natural;
 
 public enum Rule {
     AXIOM("Ax", 0),

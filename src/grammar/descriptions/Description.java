@@ -1,6 +1,6 @@
-package builder.descriptions;
+package grammar.descriptions;
 
-import builder.proof.MetaProof;
+import grammar.proof.MetaProof;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,14 +1,11 @@
-package builder.descriptions.natural;
+package grammar.descriptions.natural;
 
-import builder.descriptions.Description;
-import builder.proof.MetaProof;
-import builder.proof.NProof;
+import grammar.descriptions.Description;
+import grammar.proof.NProof;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NaturalDescription implements Description {
     private final Rule rule;

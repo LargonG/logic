@@ -1,8 +1,7 @@
-package builder.descriptions.gilbert;
+package grammar.descriptions.gilbert;
 
-import builder.descriptions.Description;
-import builder.proof.GProof;
-import builder.proof.MetaProof;
+import grammar.descriptions.Description;
+import grammar.proof.GProof;
 
 import java.util.Arrays;
 import java.util.List;

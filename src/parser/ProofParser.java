@@ -1,7 +1,7 @@
 package parser;
 
-import builder.proof.Context;
-import builder.proof.Proof;
+import grammar.proof.Context;
+import grammar.proof.Proof;
 import grammar.Expression;
 
 import java.util.Arrays;

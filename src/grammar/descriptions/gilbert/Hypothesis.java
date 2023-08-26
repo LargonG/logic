@@ -1,6 +1,6 @@
-package builder.descriptions.gilbert;
+package grammar.descriptions.gilbert;
 
-import builder.descriptions.Description;
+import grammar.descriptions.Description;
 
 /**
  * Proof is hypothesis

@@ -1,9 +1,9 @@
-import builder.descriptions.gilbert.Deduction;
-import builder.descriptions.gilbert.Incorrect;
-import builder.proof.GProof;
-import builder.proof.MetaProof;
-import builder.proof.NProof;
-import builder.proof.Proof;
+import grammar.descriptions.gilbert.Deduction;
+import grammar.descriptions.gilbert.Incorrect;
+import grammar.proof.GProof;
+import grammar.proof.MetaProof;
+import grammar.proof.NProof;
+import grammar.proof.Proof;
 import generator.Generator;
 import generator.MetaGenerator;
 import grammar.Expression;
@@ -11,7 +11,6 @@ import parser.ExpressionParser;
 import parser.Parser;
 import parser.ProofParser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;

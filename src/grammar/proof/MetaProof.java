@@ -1,6 +1,6 @@
-package builder.proof;
+package grammar.proof;
 
-import builder.descriptions.Description;
+import grammar.descriptions.Description;
 import grammar.Expression;
 
 import java.util.ArrayList;

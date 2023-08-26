@@ -1,11 +1,7 @@
 package grammar.operators;
 
-import builder.proof.Context;
-import builder.proof.NProof;
-import builder.proof.Proof;
-import grammar.Expression;
-
-import java.util.Map;
+import grammar.proof.NProof;
+import grammar.proof.Proof;
 
 public enum Operator {
     IMPL(2, false, false, new Implication()),
