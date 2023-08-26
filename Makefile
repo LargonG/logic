@@ -1,5 +1,5 @@
 all:
-	javac src/grammar/*.java src/builder/descriptions/*.java src/builder/*.java src/generator/*.java src/parser/*.java src/resolver/*.java src/*.java -d out
+	javac -cp ./src/ -d ./out/ ./src/Main.java
 
 run:
 	java -Xmx256m -cp ./out Main
