@@ -1,6 +1,10 @@
 package generator;
 
-import grammar.*;
+import grammar.BinaryOperator;
+import grammar.Expression;
+import grammar.UnaryOperator;
+import grammar.Variable;
+import grammar.operators.Operator;
 
 import java.util.Random;
 

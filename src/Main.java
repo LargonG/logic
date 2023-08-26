@@ -1,13 +1,15 @@
-import builder.MetaBuilder;
-import builder.Proof;
-import builder.RealBuilder;
-import builder.descriptions.Deduction;
-import builder.descriptions.Incorrect;
-import builder.descriptions.ModusPonens;
+import builder.descriptions.gilbert.Deduction;
+import builder.descriptions.gilbert.Incorrect;
+import builder.proof.GProof;
+import builder.proof.MetaProof;
+import builder.proof.NProof;
+import builder.proof.Proof;
 import generator.Generator;
 import generator.MetaGenerator;
 import grammar.Expression;
-import parser.*;
+import parser.ExpressionParser;
+import parser.Parser;
+import parser.ProofParser;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,39 +26,69 @@ public class Main {
      */
     public static void main(String[] args) {
 //        testMeta(10000);
+//        Scanner scanner = new Scanner(System.in);
+//        List<String> input = new ArrayList<>();
+//        while (scanner.hasNext()) {
+//            String line = scanner.nextLine();
+//            if (line.equals("0")) {
+//                break;
+//            }
+//            input.add(line);
+//        }
+//
+//        Parser<Proof> parser = new ProofParser();
+//        List<Proof> pr = input.stream().map(parser::parse).collect(Collectors.toList());
+//        for (Proof proof: pr) {
+//            System.out.println(proof);
+//        }
+//        System.out.println();
+//
+//        List<GProof> proofs = GProof.addMeta(pr);
+//
+//        for (GProof proof : proofs) {
+//            System.out.println(proof);
+//        }
+//        Proof proof = proofs.get(proofs.size() - 1).getProof();
+//        String contextString = joinContext(proof.getContext().getList());
+//        System.out.println(contextString + "|-" + proofs.get(proofs.size() - 1).getProof().getExpression().suffixString());
+//        GProof realProof = proofs.get(proofs.size() - 1).unpackDeduction();
+//        List<MetaProof> realProofs = realProof.getProofsTree();
+//        for (MetaProof r: realProofs) {
+//            System.out.println(r);
+//        }
+//        List<Expression> expressions = realProofs.stream().map(box -> box.getProof().getExpression()).collect(Collectors.toList());
+//        for (Expression expression: expressions) {
+//            System.out.println(expression.suffixString());
+//        }
+//        //checkRealExpression(expressions, contextString);
+
         Scanner scanner = new Scanner(System.in);
-        List<String> input = new ArrayList<>();
-        while (scanner.hasNext()) {
-            String line = scanner.nextLine();
-            if (line.equals("0")) {
-                break;
+        String line = scanner.nextLine();
+        Parser<Expression> parser = new ExpressionParser();
+        Expression expression = parser.parse(line);
+        List<NProof> proofs = expression.createNProof();
+        for (NProof proof: proofs) {
+            List<MetaProof> fullProof = proof.getProofsTree();
+            for (MetaProof x : fullProof) {
+                System.out.println(x);
             }
-            input.add(line);
+            System.out.println();
         }
-        List<Proof> proofs = new MetaBuilder().build(input);
-        for (Proof proof : proofs) {
+        NProof zip = NProof.zipContext(proofs, expression.getVariablesNames().size());
+        List<MetaProof> zips = zip.getProofsTree();
+        System.out.println("\nresult: ");
+        for (MetaProof proof: zips) {
             System.out.println(proof);
         }
-        Proof proof = proofs.get(proofs.size() - 1);
-        String contextString = joinContext(proof.getContextList());
-        if (proof.description instanceof ModusPonens) {
-            contextString = joinContext(((ModusPonens) proof.description).alpha.getContextList());
-        }
-        System.out.println(contextString + "|-" + proofs.get(proofs.size() - 1).expression.suffixString());
-        List<Expression> expressions = new RealBuilder().build(proofs);
-        for (Expression expression: expressions) {
-            System.out.println(expression.suffixString());
-        }
-        checkRealExpression(expressions, contextString);
     }
 
     public static void test(int testsCount) {
         Generator generator = new Generator(0);
-        Parser parser = new Parser();
+        ExpressionParser expressionParser = new ExpressionParser();
         for (int it = 0; it < testsCount; it++) {
             Expression before = generator.generate(2);
             String expr = before.suffixString();
-            Expression after = parser.parse(expr);
+            Expression after = expressionParser.parse(expr);
             if (before.toString().equals(after.toString())) {
                 System.out.println("OK");
                 System.out.println("Before: " + before);
@@ -74,30 +106,38 @@ public class Main {
     }
 
     public static void testMeta(int tests) {
+        Parser<Proof> proofParser = new ProofParser();
         MetaGenerator generator = new MetaGenerator();
         for (int i = 0; i < tests; i++) {
             MetaGenerator.Test test = generator.generateAxioms(1);
-            List<Proof> proofs = new MetaBuilder().build(Arrays.asList(test.lines));
-            for (Proof proof : proofs) {
+            List<GProof> proofs = GProof.addMeta(
+                    Arrays.stream(test.lines)
+                            .map(proofParser::parse)
+                            .collect(Collectors.toList()));
+            for (GProof proof : proofs) {
                 System.out.println(proof);
             }
-            String contextString = proofs.get(proofs.size() - 1)
-                    .getContextList()
+            String contextString = proofs.get(proofs.size() - 1).getProof()
+                    .getContext().getList()
                     .stream()
                     .map(Expression::suffixString)
                     .reduce((left, right) -> left + "," + right).orElse("");
-            List<Expression> expressions = new RealBuilder().build(proofs);
+            List<Expression> expressions = proofs.get(proofs.size() - 1).unpackDeduction()
+                    .getProofsTree().stream()
+                    .map(box -> box.getProof().getExpression())
+                    .collect(Collectors.toList());
             checkRealExpression(expressions, contextString);
         }
     }
 
     public static void checkRealExpression(List<Expression> expressions, String contextString) {
         assert !expressions.isEmpty();
+        Parser<Proof> proofParser = new ProofParser();
         List<String> lines = expressions.stream()
                 .map(expression -> contextString + "|-" + expression.suffixString()).collect(Collectors.toList());
-        List<Proof> check = new MetaBuilder().build(lines);
-        for (Proof p: check) {
-            if (p.description instanceof Deduction || p.description instanceof Incorrect) {
+        List<GProof> check = GProof.addMeta(lines.stream().map(proofParser::parse).collect(Collectors.toList()));
+        for (GProof p: check) {
+            if (p.getDescription() instanceof Deduction || p.getDescription() instanceof Incorrect) {
                 throw new RuntimeException();
             }
         }

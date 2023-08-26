@@ -1,8 +1,11 @@
 package grammar;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import builder.proof.Context;
+import builder.proof.NProof;
+import builder.proof.Proof;
+import grammar.operators.Operator;
+
+import java.util.*;
 import java.util.function.BiFunction;
 
 public class BinaryOperator implements Expression {
@@ -45,8 +48,21 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
+    public void getVariablesNames(Set<String> result) {
+        left.getVariablesNames(result);
+        right.getVariablesNames(result);
+    }
+
+    @Override
     public Expression paste(Map<String, Expression> values) {
         return new BinaryOperator(operator, left.paste(values), right.paste(values));
+    }
+
+    @Override
+    public NProof createNProof(Context context) {
+        NProof left = this.left.createNProof(context);
+        NProof right = this.right.createNProof(context);
+        return operator.createNProof(left, right, new Proof(this, context));
     }
 
     @Override

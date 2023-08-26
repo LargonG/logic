@@ -1,12 +1,16 @@
 package grammar;
 
-import parser.Parser;
+import builder.proof.Context;
+import builder.proof.NProof;
+import grammar.operators.Operator;
+import parser.ExpressionParser;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class Scheme implements Expression {
-    private static final Parser parser = new Parser();
+    private static final ExpressionParser EXPRESSION_PARSER = new ExpressionParser();
 
     public final String name;
 
@@ -30,8 +34,18 @@ public class Scheme implements Expression {
     }
 
     @Override
+    public void getVariablesNames(Set<String> result) {
+        // do nothing
+    }
+
+    @Override
     public Expression paste(Map<String, Expression> values) {
         return values.get(name);
+    }
+
+    @Override
+    public NProof createNProof(Context context) {
+        throw new UnsupportedOperationException("Scheme cannot create natural proof");
     }
 
     @Override
@@ -57,6 +71,6 @@ public class Scheme implements Expression {
     }
 
     public static Expression create(String expression, Map<String, Expression> values) {
-        return parser.parse(expression).paste(values);
+        return EXPRESSION_PARSER.parse(expression).paste(values);
     }
 }

@@ -1,4 +1,6 @@
-package builder.descriptions;
+package builder.descriptions.gilbert;
+
+import builder.descriptions.Description;
 
 /**
  * Proof is hypothesis

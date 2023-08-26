@@ -1,7 +1,14 @@
 package grammar;
 
+import builder.descriptions.natural.NaturalDescription;
+import builder.proof.Context;
+import builder.proof.NProof;
+import grammar.operators.Operator;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class Variable implements Expression {
     public final String name;
@@ -26,8 +33,24 @@ public class Variable implements Expression {
     }
 
     @Override
+    public void getVariablesNames(Set<String> result) {
+        result.add(name);
+    }
+
+    @Override
     public Expression paste(Map<String, Expression> values) {
         return this;
+    }
+
+    @Override
+    public NProof createNProof(Context context) {
+        Expression expr = this;
+        if (!context.contains(expr)) {
+            Expression newExpr = Expression.create(Operator.IMPL, this, Nil.getInstance());
+            assert context.contains(newExpr);
+            expr = newExpr;
+        }
+        return new NProof(expr, context, new NaturalDescription());
     }
 
     @Override

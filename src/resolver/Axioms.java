@@ -1,7 +1,7 @@
 package resolver;
 
 import grammar.Expression;
-import parser.Parser;
+import parser.ExpressionParser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,25 +9,25 @@ import java.util.List;
 import java.util.Map;
 
 public final class Axioms {
-    private static final Parser parser;
+    private static final ExpressionParser EXPRESSION_PARSER;
 
     public static final List<Expression> values;
 
     private static final Resolver resolver;
 
     static {
-        parser = new Parser();
+        EXPRESSION_PARSER = new ExpressionParser();
         values = new ArrayList<Expression>() {{
-            add(parser.parse("a->b->a"));                   // 0
-            add(parser.parse("(a->b)->(a->b->c)->(a->c)")); // 1
-            add(parser.parse("a->b->a&b"));                 // 2
-            add(parser.parse("a&b->a"));                    // 3
-            add(parser.parse("a&b->b"));                    // 4
-            add(parser.parse("a->a|b"));                    // 5
-            add(parser.parse("b->a|b"));                    // 6
-            add(parser.parse("(a->y)->(b->y)->(a|b->y)"));  // 7
-            add(parser.parse("(a->b)->(a->!b)->!a"));       // 8
-            add(parser.parse("!!a->a"));                    // 9
+            add(EXPRESSION_PARSER.parse("a->b->a"));                   // 0
+            add(EXPRESSION_PARSER.parse("(a->b)->(a->b->c)->(a->c)")); // 1
+            add(EXPRESSION_PARSER.parse("a->b->a&b"));                 // 2
+            add(EXPRESSION_PARSER.parse("a&b->a"));                    // 3
+            add(EXPRESSION_PARSER.parse("a&b->b"));                    // 4
+            add(EXPRESSION_PARSER.parse("a->a|b"));                    // 5
+            add(EXPRESSION_PARSER.parse("b->a|b"));                    // 6
+            add(EXPRESSION_PARSER.parse("(a->y)->(b->y)->(a|b->y)"));  // 7
+            add(EXPRESSION_PARSER.parse("(a->b)->(a->!b)->!a"));       // 8
+            add(EXPRESSION_PARSER.parse("!!a->a"));                    // 9
         }};
         resolver = new Resolver();
     }

@@ -1,15 +1,15 @@
 package generator;
 
-import builder.Proof;
-import builder.descriptions.AxiomScheme;
+import builder.descriptions.gilbert.AxiomScheme;
+import builder.proof.MetaProof;
 import grammar.Expression;
-import parser.Parser;
+import parser.ExpressionParser;
 import resolver.Axioms;
 
 import java.util.HashMap;
 
 public class MetaGenerator {
-    private final Parser parser;
+    private final ExpressionParser expressionParser;
     private final Generator expressionGenerator;
 
     public static class Test {
@@ -23,7 +23,7 @@ public class MetaGenerator {
     }
 
     public MetaGenerator() {
-        this.parser = new Parser();
+        this.expressionParser = new ExpressionParser();
         this.expressionGenerator = new Generator();
     }
 
@@ -43,7 +43,7 @@ public class MetaGenerator {
                 put("c", expressionGenerator.generate(len));
                 put("y", expressionGenerator.generate(len));
             }}).suffixString();
-            result[ai] = Proof.metaExpression(lines[ai], ai + 1, new AxiomScheme(ai));
+            result[ai] = MetaProof.metaExpression(ai + 1, lines[ai], new AxiomScheme(ai));
             ai++;
         }
         return new Test(lines, result);

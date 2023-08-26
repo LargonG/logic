@@ -1,7 +1,13 @@
 package grammar;
 
+import builder.proof.Context;
+import builder.proof.NProof;
+import grammar.operators.Operator;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class UnaryOperator implements Expression {
     public final Operator operator;
@@ -33,8 +39,18 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
+    public void getVariablesNames(Set<String> result) {
+        expr.getVariablesNames(result);
+    }
+
+    @Override
     public Expression paste(Map<String, Expression> values) {
         return new UnaryOperator(operator, expr.paste(values));
+    }
+
+    @Override
+    public NProof createNProof(Context context) {
+        throw new UnsupportedOperationException("Unary operators are not supported");
     }
 
     @Override
