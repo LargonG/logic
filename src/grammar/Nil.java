@@ -45,6 +45,11 @@ public class Nil implements Expression {
     }
 
     @Override
+    public String toString() {
+        return "_|_";
+    }
+
+    @Override
     public String suffixString(Operator before, boolean brackets) {
         return "_|_";
     }

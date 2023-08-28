@@ -11,19 +11,30 @@ import parser.ExpressionParser;
 import parser.Parser;
 import parser.ProofParser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {
-    /**
-     * Сейчас данная программа решает задачу C:
-     * по введённому корректному доказательству
-     * оно строит полное доказательство
-     * @param args
-     */
+
     public static void main(String[] args) {
+//        Scanner scanner = new Scanner(System.in);
+//        List<String> input = new ArrayList<>();
+//        while (scanner.hasNext()) {
+//            String line = scanner.nextLine();
+//            if (line.isEmpty()) {
+//                break;
+//            }
+//            input.add(line);
+//        }
+//
+//        switch (task) {
+//            case A:
+//
+//                break;
+//        }
 //        testMeta(10000);
 //        Scanner scanner = new Scanner(System.in);
 //        List<String> input = new ArrayList<>();
@@ -61,24 +72,24 @@ public class Main {
 //        }
 //        //checkRealExpression(expressions, contextString);
 
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
-        Parser<Expression> parser = new ExpressionParser();
-        Expression expression = parser.parse(line);
-        List<NProof> proofs = expression.createNProof();
-        for (NProof proof: proofs) {
-            List<MetaProof> fullProof = proof.getProofsTree();
-            for (MetaProof x : fullProof) {
-                System.out.println(x);
-            }
-            System.out.println();
-        }
-        NProof zip = NProof.zipContext(proofs, expression.getVariablesNames().size());
-        List<MetaProof> zips = zip.getProofsTree();
-        System.out.println("\nresult: ");
-        for (MetaProof proof: zips) {
-            System.out.println(proof);
-        }
+//        Scanner scanner = new Scanner(System.in);
+//        String line = scanner.nextLine();
+//        Parser<Expression> parser = new ExpressionParser();
+//        Expression expression = parser.parse(line);
+//        List<NProof> proofs = expression.createNProof();
+//        for (NProof proof: proofs) {
+//            List<MetaProof> fullProof = proof.getProofsTree();
+//            for (MetaProof x : fullProof) {
+//                System.out.println(x);
+//            }
+//            System.out.println();
+//        }
+//        NProof zip = NProof.zipContext(proofs, expression.getVariablesNames().size());
+//        List<MetaProof> zips = zip.getProofsTree();
+//        System.out.println("\nresult: ");
+//        for (MetaProof proof: zips) {
+//            System.out.println(proof);
+//        }
     }
 
     public static void test(int testsCount) {
