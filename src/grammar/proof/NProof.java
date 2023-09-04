@@ -36,7 +36,6 @@ public class NProof extends MetaProof {
         getProofsTree(proofs, 0);
     }
 
-    // TODO: проблемы с push, оно до
     private void getProofsTree(List<MetaProof> proofs, int depth) {
         List<NProof> links = description.getLinks();
         for (NProof link: links) {
@@ -47,7 +46,7 @@ public class NProof extends MetaProof {
         setId(depth - 1);
     }
 
-    private void pushTree(Context context) {
+    public void pushTree(Context context) {
         Context newContext = push(context);
         List<NProof> links = description.getLinks();
         for (NProof link: links) {
@@ -61,6 +60,10 @@ public class NProof extends MetaProof {
                 Context.merge(this.proof.getContext(), newContext));
         this.pushContext = Context.empty();
         return newContext;
+    }
+
+    public boolean check() {
+        return getDescription().getRule().getChecker().check(this, description.getLinks());
     }
 
     void addToPush(Context context) {
@@ -77,6 +80,7 @@ public class NProof extends MetaProof {
         for (PreProof pre : proofs) {
             result.add(pre.createNProof(result));
         }
+
         return result.get(result.size() - 1);
     }
 
@@ -94,17 +98,23 @@ public class NProof extends MetaProof {
                 int rj = j + (1 << (varsLeft - 1));
                 if (proofs.get(j).getProof().getExpression()
                         .equals(proofs.get(rj).getProof().getExpression())) {
-                    container.add(
-                            zipContext(
-                                    proofs.get(j), proofs.get(rj),
-                                    proofs.get(j).getProof().getContext().getList().get(0)
-                            ));
+                    NProof left = proofs.get(j);
+                    NProof right = proofs.get(rj);
+                    Expression elem = Context.diff(
+                            left.getProof().getContext(),
+                            right.getProof().getContext())
+                            .getList().get(0);
+                    container.add(zipContext(left, right, elem));
                 } else {
                     throw new IllegalArgumentException("Proof is not true");
                 }
             }
 
             proofs = container;
+        }
+
+        if (N == 0 && proofs.size() == 1) {
+            container = proofs;
         }
 
         return container.get(0);
@@ -191,6 +201,14 @@ public class NProof extends MetaProof {
                 new PreProof(proof, Context.of(left)),
                 new PreProof(left, context, Rule.AXIOM),
                 new PreProof(right, context, Rule.MODUS_PONENS, 0, 1)
+        );
+    }
+
+    public static NProof comment(PreProof proof) {
+        NProof nProof = proof.createNProof(Collections.emptyList());
+        return NProof.zip(
+                new PreProof(nProof),
+                new PreProof(nProof.getProof(), Rule.COMMENT, 0)
         );
     }
 }

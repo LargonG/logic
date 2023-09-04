@@ -1,21 +1,18 @@
 package generator;
 
-import grammar.BinaryOperator;
-import grammar.Expression;
-import grammar.UnaryOperator;
-import grammar.Variable;
+import grammar.*;
 import grammar.operators.Operator;
 
 import java.util.Random;
 
-public class Generator implements IGenerator {
+public class NormalGenerator implements IGenerator {
     private final Random random;
 
-    public Generator(int seed) {
+    public NormalGenerator(int seed) {
         this.random = new Random(seed);
     }
 
-    public Generator() {
+    public NormalGenerator() {
         this.random = new Random();
     }
 
@@ -42,9 +39,9 @@ public class Generator implements IGenerator {
     }
 
     private Expression createUnary() {
-        int varlen = randint(1) + 1;
+        int varlen = randint(10) + 1;
         if (random.nextInt() < 0) {
-            return new UnaryOperator(Operator.NOT, new Variable(createName(varlen)));
+            return new BinaryOperator(Operator.IMPL, new Variable(createName(varlen)), Nil.getInstance());
         } else {
             return new Variable(createName(varlen));
         }

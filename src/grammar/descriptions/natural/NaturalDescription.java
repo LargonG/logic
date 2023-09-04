@@ -38,6 +38,10 @@ public class NaturalDescription implements Description {
         return links;
     }
 
+    public Rule getRule() {
+        return rule;
+    }
+
     @Override
     public String toString() {
         return rule.toString();

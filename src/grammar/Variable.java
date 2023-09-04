@@ -42,6 +42,11 @@ public class Variable implements Expression {
     }
 
     @Override
+    public Expression toNormalForm() {
+        return this;
+    }
+
+    @Override
     public NProof createNProof(Context context) {
         Expression expr = this;
         if (!context.contains(expr)) {

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public interface Expression extends Comparable<Expression> {
     boolean calculate(Map<String, Boolean> values);
     Expression paste(Map<String, Expression> values);
+    Expression toNormalForm();
 
     NProof createNProof(Context context);
 
@@ -62,6 +63,19 @@ public interface Expression extends Comparable<Expression> {
 
         assert left != null && right != null;
         return new BinaryOperator(operator, left, right);
+    }
+
+    static List<Expression> decomposition(Expression expression) {
+        BinaryOperator op = (BinaryOperator) expression;
+        return Arrays.asList(op.left, op.right);
+    }
+
+    static List<Expression> decomposition(Expression expression, Operator operator) {
+        BinaryOperator op = (BinaryOperator) expression;
+        if (op.operator != operator) {
+            throw new IllegalStateException("Binary operator is not " + operator + " actual: " + op.operator);
+        }
+        return Arrays.asList(op.left, op.right);
     }
 
     static List<Expression> separate(Expression expr, Operator by) {

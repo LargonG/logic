@@ -10,7 +10,7 @@ import java.util.HashMap;
 
 public class MetaGenerator {
     private final ExpressionParser expressionParser;
-    private final Generator expressionGenerator;
+    private final IGenerator generator;
 
     public static class Test {
         public final String[] lines;
@@ -22,9 +22,9 @@ public class MetaGenerator {
         }
     }
 
-    public MetaGenerator() {
+    public MetaGenerator(IGenerator generator) {
         this.expressionParser = new ExpressionParser();
-        this.expressionGenerator = new Generator();
+        this.generator = generator;
     }
 
     /**
@@ -38,11 +38,11 @@ public class MetaGenerator {
         int ai = 0;
         for (Expression axiom: Axioms.values) {
             lines[ai] = "|-" + axiom.paste(new HashMap<String, Expression>() {{
-                put("a", expressionGenerator.generate(len));
-                put("b", expressionGenerator.generate(len));
-                put("c", expressionGenerator.generate(len));
-                put("y", expressionGenerator.generate(len));
-            }}).suffixString();
+                put("a", generator.generate(len));
+                put("b", generator.generate(len));
+                put("c", generator.generate(len));
+                put("y", generator.generate(len));
+            }}).toNormalForm().suffixString();
             result[ai] = MetaProof.metaExpression(ai + 1, lines[ai], new AxiomScheme(ai));
             ai++;
         }

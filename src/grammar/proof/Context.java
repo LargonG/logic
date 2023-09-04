@@ -121,6 +121,17 @@ public final class Context {
         return new Context(first, second.list);
     }
 
+    public static Context diff(final Context first, final Context second) {
+        Map<Expression, Integer> values = new HashMap<>(first.getMap());
+        for (Map.Entry<Expression, Integer> entry: second.getMap().entrySet()) {
+            values.merge(entry.getKey(), -entry.getValue(), Integer::sum);
+            if (values.get(entry.getKey()) <= 0) {
+                values.remove(entry.getKey());
+            }
+        }
+        return new Context(values, false);
+    }
+
     private static <T> List<T> toList(Map<T, Integer> map) {
         return map.entrySet()
                 .stream()

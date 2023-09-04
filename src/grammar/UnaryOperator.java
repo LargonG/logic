@@ -48,6 +48,11 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
+    public Expression toNormalForm() {
+        return new BinaryOperator(Operator.IMPL, expr.toNormalForm(), Nil.getInstance());
+    }
+
+    @Override
     public NProof createNProof(Context context) {
         throw new UnsupportedOperationException("Unary operators are not supported");
     }

@@ -69,7 +69,7 @@ public abstract class MetaProof {
      * внутри себя хранит ссылки на предыдущие доказательства <br>
      * Если хотим получить общую картину доказательства (рекурсивно),
      * то вызываем метод {@link MetaProof#getProofsTree()}
-     * @return
+     * @return description
      */
     public Description getDescription() {
         return description;

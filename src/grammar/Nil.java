@@ -35,6 +35,11 @@ public class Nil implements Expression {
     }
 
     @Override
+    public Expression toNormalForm() {
+        return this;
+    }
+
+    @Override
     public NProof createNProof(Context context) {
         Context newContext = context.add(this);
         return NProof.zip(

@@ -1,3 +1,4 @@
+import generator.NormalGenerator;
 import grammar.descriptions.gilbert.Deduction;
 import grammar.descriptions.gilbert.Incorrect;
 import grammar.proof.GProof;
@@ -117,7 +118,7 @@ public class Main {
 
     public static void testMeta(int tests) {
         Parser<Proof> proofParser = new ProofParser();
-        MetaGenerator generator = new MetaGenerator();
+        MetaGenerator generator = new MetaGenerator(new NormalGenerator());
         for (int i = 0; i < tests; i++) {
             MetaGenerator.Test test = generator.generateAxioms(1);
             List<GProof> proofs = GProof.addMeta(

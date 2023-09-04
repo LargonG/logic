@@ -59,6 +59,16 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
+    public Expression toNormalForm() {
+        Expression newLeft = left.toNormalForm();
+        Expression newRight = right.toNormalForm();
+        if (newLeft != left || newRight != right) {
+            return new BinaryOperator(operator, newLeft, newRight);
+        }
+        return this;
+    }
+
+    @Override
     public NProof createNProof(Context context) {
         NProof left = this.left.createNProof(context);
         NProof right = this.right.createNProof(context);

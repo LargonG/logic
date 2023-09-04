@@ -44,6 +44,11 @@ public class Scheme implements Expression {
     }
 
     @Override
+    public Expression toNormalForm() {
+        return this;
+    }
+
+    @Override
     public NProof createNProof(Context context) {
         throw new UnsupportedOperationException("Scheme cannot create natural proof");
     }
