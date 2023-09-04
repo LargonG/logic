@@ -1,8 +1,8 @@
 package grammar;
 
+import grammar.operators.Operator;
 import grammar.proof.Context;
 import grammar.proof.NProof;
-import grammar.operators.Operator;
 
 import java.util.*;
 import java.util.stream.Collectors;

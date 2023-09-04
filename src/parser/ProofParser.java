@@ -1,8 +1,8 @@
 package parser;
 
-import grammar.proof.Context;
-import grammar.proof.Proof;
 import grammar.Expression;
+import grammar.proof.Proof;
+import grammar.proof.Context;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,11 +19,11 @@ public class ProofParser implements Parser<Proof> {
     public Proof parse(String line) {
         String[] s = line.split("[|]-");
         String[] contextExpressions = s[0].split(",");
-        Context context = new Context(Arrays
+        Context immutableContext = new Context(Arrays
                 .stream(contextExpressions)
                 .map(parser::parse)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
-        return new Proof(parser.parse(s[1]), context);
+        return new Proof(parser.parse(s[1]), immutableContext);
     }
 }

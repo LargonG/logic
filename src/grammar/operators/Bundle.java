@@ -1,8 +1,11 @@
 package grammar.operators;
 
-import grammar.proof.*;
 import grammar.BinaryOperator;
 import grammar.Expression;
+import grammar.proof.NProof;
+import grammar.proof.Proof;
+
+import java.util.List;
 
 public interface Bundle {
     NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
@@ -11,10 +14,10 @@ public interface Bundle {
     NProof none(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
 
     default NProof createNProof(NProof left, NProof right, Proof what) {
-        BinaryOperator op = ((BinaryOperator) what.getExpression());
+        List<Expression> lst = Expression.decomposition(what.getExpression());
 
-        Expression baseLeft = op.left;
-        Expression baseRight = op.right;
+        Expression baseLeft = lst.get(0);
+        Expression baseRight = lst.get(1);
 
         if (left.getProof().getExpression().equals(baseLeft) && right.getProof().getExpression().equals(baseRight)) {
             return all(left, right, what, baseLeft, baseRight);

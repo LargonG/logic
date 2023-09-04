@@ -1,6 +1,5 @@
 package tasks;
 
-import generator.Generator;
 import generator.MetaGenerator;
 import generator.NormalGenerator;
 import grammar.Expression;
@@ -11,10 +10,11 @@ import parser.ExpressionParser;
 import parser.Parser;
 import parser.ProofParser;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TaskD implements Task {
@@ -52,10 +52,18 @@ public class TaskD implements Task {
         List<NProof> proofs = expression.createNProof();
         NProof zipped = NProof.zipContext(proofs, variables.size());
 
-        List<MetaProof> result = zipped.getProofsTree();
-        for (MetaProof proof: result) {
-            System.out.println(proof);
-        }
+        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FileDescriptor.out), StandardCharsets.UTF_8), 512));
+        zipped.printProofsTree(System.out);
+        out.flush();
+
+//        List<MetaProof> result = zipped.getProofsTree();
+//        try {
+//            checkCorrection(result.stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
+//        } catch (RuntimeException e) {
+//            zipped.getProofsTree();
+//            System.out.println();
+//            checkCorrection(result.stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
+//        }
     }
 
     private void checkCorrection(final List<NProof> result) {

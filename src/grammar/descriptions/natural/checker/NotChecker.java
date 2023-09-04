@@ -16,7 +16,7 @@ public class NotChecker implements RuleChecker {
         Expression not = Expression.create(Operator.IMPL, root.getProof().getExpression(), Nil.getInstance());
         return from.getProof().getExpression().equals(Nil.getInstance())
                 && from.getProof().getContext().contains(not)
-                && root.getProof().getContext().equals(from.getProof().getContext().remove(not))
+                && root.getProof().getContext().equals(from.getProof().getContext().diff(not))
                 && children.size() == 1;
     }
 

@@ -1,21 +1,17 @@
+import generator.Generator;
+import generator.MetaGenerator;
 import generator.NormalGenerator;
+import grammar.Expression;
 import grammar.descriptions.gilbert.Deduction;
 import grammar.descriptions.gilbert.Incorrect;
 import grammar.proof.GProof;
-import grammar.proof.MetaProof;
-import grammar.proof.NProof;
 import grammar.proof.Proof;
-import generator.Generator;
-import generator.MetaGenerator;
-import grammar.Expression;
 import parser.ExpressionParser;
 import parser.Parser;
 import parser.ProofParser;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class Main {

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Proof {
     protected final Expression expression;
-    protected final Context context;
+    protected final Context immutableContext;
 
     protected Proof fullContextForm = null;
 
@@ -16,12 +16,12 @@ public class Proof {
      * Создаёт конструкцию Proof, которая на бумаге выглядит вот так: <br>
      * {context} |- {expression} [{description}]
      * @param expression -- выражение, что доказывается с этим контекстом
-     * @param context -- контекст, список выражений, которые мы считаем за истину
+     * @param immutableContext -- контекст, список выражений, которые мы считаем за истину
      */
     public Proof(final Expression expression,
-                    final Context context) {
+                    final Context immutableContext) {
         this.expression = expression;
-        this.context = context;
+        this.immutableContext = immutableContext;
     }
 
     public Proof getFullContextForm() {
@@ -29,7 +29,7 @@ public class Proof {
             List<Expression> sep = Expression.separate(expression, Operator.IMPL);
             fullContextForm = new Proof(
                     sep.get(sep.size() - 1),
-                    new Context(context, sep.subList(0, sep.size() - 1)));
+                    new Context(immutableContext, sep.subList(0, sep.size() - 1)));
         }
         return fullContextForm;
     }
@@ -48,7 +48,7 @@ public class Proof {
      * @return контекст (список гипотез)
      */
     public final Context getContext() {
-        return context;
+        return immutableContext;
     }
 
     /**
@@ -64,16 +64,16 @@ public class Proof {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Proof proof = (Proof) o;
-        return Objects.equals(expression, proof.expression) && Objects.equals(context, proof.context);
+        return Objects.equals(expression, proof.expression) && Objects.equals(immutableContext, proof.immutableContext);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(expression, context);
+        return Objects.hash(expression, immutableContext);
     }
 
     @Override
     public String toString() {
-        return context + "|-" + expression.suffixString();
+        return immutableContext + "|-" + expression.suffixString();
     }
 }

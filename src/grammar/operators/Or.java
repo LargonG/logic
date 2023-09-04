@@ -1,12 +1,12 @@
 package grammar.operators;
 
+import grammar.Expression;
+import grammar.Nil;
 import grammar.descriptions.natural.Rule;
 import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
-import grammar.Expression;
-import grammar.Nil;
 
 public class Or implements Bundle {
     private NProof or(NProof root, Proof what, boolean left) {

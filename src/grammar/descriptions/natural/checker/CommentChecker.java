@@ -1,6 +1,5 @@
 package grammar.descriptions.natural.checker;
 
-import grammar.descriptions.natural.NaturalDescription;
 import grammar.descriptions.natural.Rule;
 import grammar.proof.MetaProof;
 

@@ -1,11 +1,14 @@
 package grammar;
 
+import grammar.operators.Operator;
 import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
-import grammar.operators.Operator;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public class BinaryOperator implements Expression {

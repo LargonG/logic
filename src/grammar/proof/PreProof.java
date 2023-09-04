@@ -1,8 +1,8 @@
 package grammar.proof;
 
+import grammar.Expression;
 import grammar.descriptions.natural.NaturalDescription;
 import grammar.descriptions.natural.Rule;
-import grammar.Expression;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +14,7 @@ public class PreProof {
     private final Rule rule;
     private final List<Integer> ids;
 
-    private final Context pushContext;
+    private Context pushContext;
 
     private NProof nProof;
 
@@ -45,39 +45,37 @@ public class PreProof {
     public PreProof(final Proof proof,
                     final Rule rule,
                     final int... ids) {
-        this(null, proof, Context.empty(), rule, null, ids);
+        this(null, proof, null, rule, null, ids);
     }
 
     public PreProof(final Expression expression,
-                    final Context context,
+                    final Context Context,
                     final Context pushContext,
                     final Rule rule,
                     final int... ids
                     ) {
-        this(null, new Proof(expression, context), pushContext, rule, null, ids);
+        this(null, new Proof(expression, Context), pushContext, rule, null, ids);
     }
 
     public PreProof(final Expression expression,
-                    final Context context,
+                    final Context Context,
                     final Rule rule,
                     final int... ids) {
-        this(null, new Proof(expression, context), Context.empty(), rule, null, ids);
+        this(null, new Proof(expression, Context), null, rule, null, ids);
     }
 
     public PreProof(final NProof nProof,
                     final Context pushContext) {
-        this(new NProof(nProof.getProof(),
-                nProof.getDescription(),
-                pushContext), null, Context.empty(), null, null);
+        this(nProof, null, pushContext, null, null);
     }
 
     public PreProof(final NProof nProof) {
-        this(nProof, null, Context.empty(), null, null);
+        this(nProof, null, null, null, null);
     }
 
     public PreProof(final Function<NProof, NProof> create,
                     final int... ids) {
-        this(null, null, Context.empty(), null, create, ids);
+        this(null, null, null, null, create, ids);
     }
 
     public NProof createNProof(List<NProof> others) {
@@ -86,14 +84,18 @@ public class PreProof {
                 nProof = create.apply(others.get(ids.get(0)));
             } else {
                 nProof = new NProof(proof,
-                        new NaturalDescription(rule,
-                                ids.stream()
-                                        .map(others::get)
-                                        .collect(Collectors.toList())),
-                        pushContext);
+                        new NaturalDescription(
+                                rule,
+                                ids.stream().map(others::get)
+                                        .collect(Collectors.toList())
+                        ), pushContext);
+                pushContext = null;
             }
-        } else if (pushContext != null) {
-            nProof.addToPush(pushContext); // WARNING: при вызове фукнции 2 раза, nProof->context увеличится
+        }
+
+        if (pushContext != null) {
+            nProof.addToPush(pushContext);
+            pushContext = null;
         }
 
         return nProof;

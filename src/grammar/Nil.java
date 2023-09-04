@@ -1,11 +1,11 @@
 package grammar;
 
 import grammar.descriptions.natural.Rule;
+import grammar.operators.Operator;
 import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
-import grammar.operators.Operator;
 
 import java.util.Map;
 import java.util.Set;
@@ -40,11 +40,11 @@ public class Nil implements Expression {
     }
 
     @Override
-    public NProof createNProof(Context context) {
-        Context newContext = context.add(this);
+    public NProof createNProof(Context immutableContext) {
+        Context newImmutableContext = immutableContext.merge(this);
         return NProof.zip(
-                new PreProof(new Proof(this, newContext), Rule.AXIOM),
-                new PreProof(Expression.create(Operator.IMPL, this, this), context,
+                new PreProof(new Proof(this, newImmutableContext), Rule.AXIOM),
+                new PreProof(Expression.create(Operator.IMPL, this, this), immutableContext,
                         Rule.DEDUCTION, 0)
         );
     }

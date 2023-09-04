@@ -1,19 +1,21 @@
 package grammar.proof;
 
-import grammar.descriptions.natural.NaturalDescription;
-import grammar.descriptions.natural.Rule;
 import grammar.Expression;
 import grammar.Nil;
+import grammar.descriptions.natural.NaturalDescription;
+import grammar.descriptions.natural.Rule;
 import grammar.operators.Operator;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class NProof extends MetaProof {
-    private Context pushContext;
+    Context pushContext = null;
+
     public NProof(final Proof proof,
                   final NaturalDescription description) {
         super(proof, description, -1);
-        pushContext = Context.empty();
     }
 
     public NProof(final Proof proof,
@@ -24,10 +26,9 @@ public class NProof extends MetaProof {
     }
 
     public NProof(final Expression expression,
-                  final Context context,
+                  final Context immutableContext,
                   final NaturalDescription description) {
-        super(expression, context, description, -1);
-        pushContext = Context.empty();
+        super(expression, immutableContext, description, -1);
     }
 
     @Override
@@ -36,30 +37,63 @@ public class NProof extends MetaProof {
         getProofsTree(proofs, 0);
     }
 
-    private void getProofsTree(List<MetaProof> proofs, int depth) {
+    private void getProofsTree(final List<MetaProof> proofs, int depth) {
         List<NProof> links = description.getLinks();
         for (NProof link: links) {
             link.getProofsTree(proofs, depth + 1);
         }
 
-        proofs.add(this);
         setId(depth - 1);
+        proofs.add(this);
+
+    }
+
+    @Override
+    public void printProofsTree(PrintStream out) {
+        printProofsTree(out, Context.empty(), 0);
+    }
+
+    private void printProofsTree(PrintStream out, Context context, int depth) {
+        if (pushContext != null) {
+            context.add(pushContext);
+        }
+        List<NProof> links = description.getLinks();
+        for (NProof link: links) {
+            link.printProofsTree(out, context, depth + 1);
+        }
+
+        setId(depth - 1);
+        String old = proof.getContext().toString();
+        String nes = context.toString();
+        String cnt = old.isEmpty() ? nes : nes.isEmpty() ? old : (old + "," + nes);
+        out.println(metaExpression(this.id,
+                        cnt + "|-" + proof.getExpression().suffixString(), this.description));
+        if (pushContext != null) {
+            context.remove(pushContext);
+        }
     }
 
     public void pushTree(Context context) {
-        Context newContext = push(context);
+        Context pushed = push(context);
+
         List<NProof> links = description.getLinks();
         for (NProof link: links) {
-            link.pushTree(newContext);
+            link.pushTree(context);
+        }
+
+        if (pushed != null) {
+            context.remove(pushed);
         }
     }
 
     private Context push(Context context) {
-        Context newContext = Context.merge(this.pushContext, context);
-        this.proof = new Proof(this.proof.getExpression(),
-                Context.merge(this.proof.getContext(), newContext));
-        this.pushContext = Context.empty();
-        return newContext;
+        if (pushContext != null) {
+            context.add(this.pushContext);
+        }
+        Context pushed = this.pushContext;
+        this.proof = new Proof(proof.getExpression(), proof.getContext().merge(context));
+        this.pushContext = null;
+        return pushed;
     }
 
     public boolean check() {
@@ -67,7 +101,10 @@ public class NProof extends MetaProof {
     }
 
     void addToPush(Context context) {
-        this.pushContext = Context.merge(this.pushContext, context);
+        if (this.pushContext == null) {
+            this.pushContext = Context.empty();
+        }
+        this.pushContext.add(context);
     }
 
     @Override
@@ -100,8 +137,7 @@ public class NProof extends MetaProof {
                         .equals(proofs.get(rj).getProof().getExpression())) {
                     NProof left = proofs.get(j);
                     NProof right = proofs.get(rj);
-                    Expression elem = Context.diff(
-                            left.getProof().getContext(),
+                    Expression elem = left.getProof().getContext().diff(
                             right.getProof().getContext())
                             .getList().get(0);
                     container.add(zipContext(left, right, elem));
@@ -123,7 +159,7 @@ public class NProof extends MetaProof {
     private static NProof zipContext(NProof left, NProof right, Expression A) {
         Context leftContext = left.getProof().getContext();
         Context rightContext = right.getProof().getContext();
-        Context context = left.getProof().getContext().remove(A);
+        Context context = left.getProof().getContext().diff(A);
 
         Expression notA = Expression.create(Operator.IMPL, A, Nil.getInstance());
         Expression aOrNotA = Expression.create(Operator.OR, A, notA);
@@ -140,7 +176,7 @@ public class NProof extends MetaProof {
                 new PreProof(NProof::contraPosition, 5), // 7
                 new PreProof(NProof::deductionLeft, 6), // 8
                 new PreProof(NProof::deductionLeft, 7), // 9
-                new PreProof(Nil.getInstance(), context.add( // 10
+                new PreProof(Nil.getInstance(), context.merge( // 10
                         Expression.create(Operator.IMPL, aOrNotA, Nil.getInstance())),
                         Rule.MODUS_PONENS, 9, 8
                         ),
@@ -154,9 +190,9 @@ public class NProof extends MetaProof {
 
     public static NProof contraPosition(NProof proof) {
         Expression expr = proof.getProof().getExpression();
-        List<Expression> sep = Expression.separate(
+        List<Expression> sep = Expression.decomposition(
                 proof.getProof().getExpression(),
-                Operator.IMPL, 1);
+                Operator.IMPL);
 
         Expression left = sep.get(0);
         Expression right = sep.get(1);
@@ -165,21 +201,21 @@ public class NProof extends MetaProof {
         Expression notRight = Expression.create(Operator.IMPL, right, Nil.getInstance());
         Expression contraProof = Expression.create(Operator.IMPL, notRight, notLeft);
 
-        Context context = Context.merge(
-                proof.getProof().getContext(),
-                Context.of(expr, notRight, left)
-        );
+        Context immutableContext = proof.getProof().getContext()
+                .merge(
+                        Context.of(expr, notRight, left)
+                );
 
         return NProof.zip(
                 new PreProof(proof), // 0
-                new PreProof(expr, context, Rule.AXIOM), // 1
-                new PreProof(left, context, Rule.AXIOM), // 2
-                new PreProof(right, context, Rule.MODUS_PONENS, 1, 2), // 3
-                new PreProof(notRight, context, Rule.AXIOM), // 4
-                new PreProof(Nil.getInstance(), context, Rule.MODUS_PONENS, 4, 3), // 5
-                new PreProof(notLeft, context.remove(left), Rule.DEDUCTION, 5), // 6
+                new PreProof(expr, immutableContext, Rule.AXIOM), // 1
+                new PreProof(left, immutableContext, Rule.AXIOM), // 2
+                new PreProof(right, immutableContext, Rule.MODUS_PONENS, 1, 2), // 3
+                new PreProof(notRight, immutableContext, Rule.AXIOM), // 4
+                new PreProof(Nil.getInstance(), immutableContext, Rule.MODUS_PONENS, 4, 3), // 5
+                new PreProof(notLeft, immutableContext.diff(left), Rule.DEDUCTION, 5), // 6
                 new PreProof( // 7
-                        contraProof, context.remove(left, notRight), Rule.DEDUCTION, 6),
+                        contraProof, immutableContext.diff(left, notRight), Rule.DEDUCTION, 6),
                 new PreProof( // 8
                         Expression.create(Operator.IMPL, expr, contraProof),
                         proof.getProof().getContext(),
@@ -190,25 +226,17 @@ public class NProof extends MetaProof {
     }
 
     public static NProof deductionLeft(NProof proof) {
-        List<Expression> sep = Expression.separate(proof.getProof().getExpression(), Operator.IMPL, 1);
+        List<Expression> sep = Expression.decomposition(proof.getProof().getExpression(), Operator.IMPL);
 
         Expression left = sep.get(0);
         Expression right = sep.get(1);
 
-        Context context = proof.getProof().getContext().add(left);
+        Context immutableContext = proof.getProof().getContext().merge(left);
 
         return NProof.zip(
                 new PreProof(proof, Context.of(left)),
-                new PreProof(left, context, Rule.AXIOM),
-                new PreProof(right, context, Rule.MODUS_PONENS, 0, 1)
-        );
-    }
-
-    public static NProof comment(PreProof proof) {
-        NProof nProof = proof.createNProof(Collections.emptyList());
-        return NProof.zip(
-                new PreProof(nProof),
-                new PreProof(nProof.getProof(), Rule.COMMENT, 0)
+                new PreProof(left, immutableContext, Rule.AXIOM),
+                new PreProof(right, immutableContext, Rule.MODUS_PONENS, 0, 1)
         );
     }
 }

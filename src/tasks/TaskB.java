@@ -1,14 +1,9 @@
 package tasks;
 
-import grammar.Expression;
 import grammar.proof.GProof;
-import grammar.proof.MetaProof;
-import parser.ExpressionParser;
 import parser.ProofParser;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class TaskB implements Task {

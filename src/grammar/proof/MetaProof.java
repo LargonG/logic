@@ -1,8 +1,10 @@
 package grammar.proof;
 
-import grammar.descriptions.Description;
 import grammar.Expression;
+import grammar.descriptions.Description;
 
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +22,10 @@ public abstract class MetaProof {
     }
 
     public MetaProof(final Expression expression,
-                     final Context context,
+                     final Context immutableContext,
                      final Description description,
                      final int id) {
-        this.proof = new Proof(expression, context);
+        this.proof = new Proof(expression, immutableContext);
         this.description = description;
         this.id = id;
     }
@@ -40,6 +42,10 @@ public abstract class MetaProof {
     }
 
     protected abstract void getProofsTree(List<MetaProof> proofs);
+
+
+    public abstract void printProofsTree(PrintStream out);
+
 
     /**
      * Опциональный индекс, нужен для вывода,
@@ -68,7 +74,7 @@ public abstract class MetaProof {
      * Пояснение к доказательству, из чего оно было получено,
      * внутри себя хранит ссылки на предыдущие доказательства <br>
      * Если хотим получить общую картину доказательства (рекурсивно),
-     * то вызываем метод {@link MetaProof#getProofsTree()}
+     * то вызываем метод {@link MetaProof#printProofsTree()}
      * @return description
      */
     public Description getDescription() {

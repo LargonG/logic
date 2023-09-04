@@ -1,8 +1,8 @@
 package generator;
 
+import grammar.Expression;
 import grammar.descriptions.gilbert.AxiomScheme;
 import grammar.proof.MetaProof;
-import grammar.Expression;
 import parser.ExpressionParser;
 import resolver.Axioms;
 

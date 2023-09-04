@@ -1,8 +1,8 @@
 package grammar.operators;
 
+import grammar.Expression;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
-import grammar.Expression;
 
 public class Not implements Bundle {
     private final static RuntimeException exception =

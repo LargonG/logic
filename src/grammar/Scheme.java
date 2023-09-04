@@ -1,8 +1,8 @@
 package grammar;
 
+import grammar.operators.Operator;
 import grammar.proof.Context;
 import grammar.proof.NProof;
-import grammar.operators.Operator;
 import parser.ExpressionParser;
 
 import java.util.Map;
@@ -49,7 +49,7 @@ public class Scheme implements Expression {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(Context immutableContext) {
         throw new UnsupportedOperationException("Scheme cannot create natural proof");
     }
 

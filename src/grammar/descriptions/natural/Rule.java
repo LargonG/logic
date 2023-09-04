@@ -13,7 +13,7 @@ public enum Rule {
     OR_COMPOSITION_RIGHT("Ir|", 1, new OrCompositionRightChecker()),
     EXCLUDED_MIDDLE_RULE("E|", 3, new ExcludedMiddleChecker()),
     NOT("E!!", 1, new NotChecker()),
-    COMMENT("HELP", 1, new CommentChecker())
+    COMMENT("HELP", 2, new ModusPonensChecker())
     ;
 
     private final String value;

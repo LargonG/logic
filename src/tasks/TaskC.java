@@ -1,11 +1,12 @@
 package tasks;
 
+import grammar.proof.GProof;
+import grammar.proof.MetaProof;
+import grammar.proof.Proof;
 import parser.Parser;
 import parser.ProofParser;
-import grammar.proof.*;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class TaskC implements Task {

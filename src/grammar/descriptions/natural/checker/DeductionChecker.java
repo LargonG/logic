@@ -16,7 +16,7 @@ public class DeductionChecker implements RuleChecker {
                 root.getProof().getExpression(),
                 Operator.IMPL);
 
-        return root.getProof().getContext().add(decomposition.get(0)).equals(ded.getProof().getContext())
+        return root.getProof().getContext().merge(decomposition.get(0)).equals(ded.getProof().getContext())
                 && ded.getProof().getExpression().equals(decomposition.get(1))
                 && decomposition.size() == 2
                 && children.size() == 1;
