@@ -16,6 +16,14 @@ public class BinaryOperator implements Expression {
     public final Expression left;
     public final Expression right;
 
+    private final static Map<Operator, BiFunction<Boolean, Boolean, Boolean>> mapping =
+            new HashMap<Operator, BiFunction<Boolean, Boolean, Boolean>>()
+            {{
+                put(Operator.OR, (left, right) -> left || right);
+                put(Operator.AND, (left, right) -> left && right);
+                put(Operator.IMPL, (left, right) -> !left || right);
+            }};
+
     public BinaryOperator(Operator operator, Expression left, Expression right) {
         this.operator = operator;
         this.left = left;
@@ -29,12 +37,6 @@ public class BinaryOperator implements Expression {
 
     @Override
     public boolean calculate(Map<String, Boolean> values) {
-        Map<Operator, BiFunction<Boolean, Boolean, Boolean>> mapping = new HashMap<Operator, BiFunction<Boolean, Boolean, Boolean>>()
-        {{
-            put(Operator.OR, (left, right) -> left || right);
-            put(Operator.AND, (left, right) -> left && right);
-            put(Operator.IMPL, (left, right) -> !left || right);
-        }};
         return mapping.get(operator).apply(left.calculate(values), right.calculate(values));
     }
 

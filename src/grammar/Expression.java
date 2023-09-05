@@ -26,10 +26,13 @@ public interface Expression extends Comparable<Expression> {
             for (int j = 0; j < vars.size(); j++) {
                 context.put(vars.get(j), (i & (1 << j)) == 0);
             }
-            result.add(createNProof(new Context(
-                    context.entrySet().stream().map(entry -> {
-                        Variable v = new Variable(entry.getKey());
-                        return entry.getValue() ? v : Expression.create(Operator.IMPL, v, Nil.getInstance());
+
+            result.add(createNProof(
+                    new Context(context.entrySet().stream()
+                            .map(entry -> {
+                                Variable v = new Variable(entry.getKey());
+                                return entry.getValue() ? v :
+                                        Expression.create(Operator.IMPL, v, Nil.getInstance());
                     }).collect(Collectors.toList())
             )));
         }
@@ -62,6 +65,11 @@ public interface Expression extends Comparable<Expression> {
         }
 
         assert left != null && right != null;
+        if (operator == Operator.OR) {
+            return new BinaryOr(left, right);
+        } else if (operator == Operator.IMPL) {
+            return new BinaryImplement(left, right);
+        }
         return new BinaryOperator(operator, left, right);
     }
 

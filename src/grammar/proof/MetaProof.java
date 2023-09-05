@@ -3,7 +3,6 @@ package grammar.proof;
 import grammar.Expression;
 import grammar.descriptions.Description;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +34,16 @@ public abstract class MetaProof {
      * что связанны с данным доказательством через {@link MetaProof#getDescription() description}
      * @return result контейнер, где в итоге будут лежать доказательства, которые связаны с нашим
      */
-    public List<MetaProof> getProofsTree() {
+    public List<MetaProof> getProofTree() {
         List<MetaProof> result = new ArrayList<>();
-        getProofsTree(result);
+        getProofTree(result);
         return result;
     }
 
-    protected abstract void getProofsTree(List<MetaProof> proofs);
+    protected abstract void getProofTree(List<MetaProof> proofs);
 
 
-    public abstract void printProofsTree(PrintStream out);
+    public abstract void printProofsTree(PrintWriter out);
 
 
     /**

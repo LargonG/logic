@@ -8,7 +8,6 @@ import grammar.descriptions.gilbert.*;
 import grammar.operators.Operator;
 import resolver.Axioms;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -54,10 +53,10 @@ public class GProof extends MetaProof {
     }
 
     @Override
-    protected void getProofsTree(List<MetaProof> proofs) {
+    protected void getProofTree(List<MetaProof> proofs) {
         List<GProof> links = description.getLinks();
         for (GProof link: links) {
-            link.getProofsTree(proofs);
+            link.getProofTree(proofs);
         }
 
         proofs.add(this);
@@ -65,8 +64,8 @@ public class GProof extends MetaProof {
     }
 
     @Override
-    public void printProofsTree(PrintStream out) {
-        List<MetaProof> proofs = getProofsTree();
+    public void printProofsTree(PrintWriter out) {
+        List<MetaProof> proofs = getProofTree();
         for (MetaProof proof: proofs) {
             out.println(proof);
         }

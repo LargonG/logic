@@ -2,6 +2,7 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.Nil;
+import grammar.Variable;
 import grammar.descriptions.natural.NaturalDescription;
 import grammar.descriptions.natural.Rule;
 import grammar.operators.Operator;
@@ -32,7 +33,7 @@ public class NProof extends MetaProof {
     }
 
     @Override
-    protected void getProofsTree(List<MetaProof> proofs) {
+    protected void getProofTree(List<MetaProof> proofs) {
         pushTree(Context.empty());
         getProofsTree(proofs, 0);
     }
@@ -49,11 +50,11 @@ public class NProof extends MetaProof {
     }
 
     @Override
-    public void printProofsTree(PrintStream out) {
+    public void printProofsTree(PrintWriter out) {
         printProofsTree(out, Context.empty(), 0);
     }
 
-    private void printProofsTree(PrintStream out, Context context, int depth) {
+    private void printProofsTree(PrintWriter out, Context context, int depth) {
         if (pushContext != null) {
             context.add(pushContext);
         }
@@ -126,7 +127,8 @@ public class NProof extends MetaProof {
     }
 
     public static NProof zipContext(List<NProof> proofs,
-                                          final int N) {
+                                          List<String> vars) {
+        final int N = vars.size();
         List<NProof> container = Collections.emptyList();
         for (int i = 0; i < N; i++) {
             int varsLeft = N - i;
@@ -137,9 +139,7 @@ public class NProof extends MetaProof {
                         .equals(proofs.get(rj).getProof().getExpression())) {
                     NProof left = proofs.get(j);
                     NProof right = proofs.get(rj);
-                    Expression elem = left.getProof().getContext().diff(
-                            right.getProof().getContext())
-                            .getList().get(0);
+                    Expression elem = new Variable(vars.get(N - i - 1));
                     container.add(zipContext(left, right, elem));
                 } else {
                     throw new IllegalArgumentException("Proof is not true");
@@ -157,86 +157,30 @@ public class NProof extends MetaProof {
     }
 
     private static NProof zipContext(NProof left, NProof right, Expression A) {
-        Context leftContext = left.getProof().getContext();
-        Context rightContext = right.getProof().getContext();
+
+        Expression expression = left.getProof().getExpression();
         Context context = left.getProof().getContext().diff(A);
 
         Expression notA = Expression.create(Operator.IMPL, A, Nil.getInstance());
         Expression aOrNotA = Expression.create(Operator.OR, A, notA);
 
+        Expression notAorNotA = Expression.create(Operator.IMPL, aOrNotA, Nil.getInstance());
+
+        Context contextA = context.merge(notAorNotA);
+        Context contextBase = contextA.merge(A);
         return NProof.zip(
-                new PreProof(A, leftContext, Rule.AXIOM), // 0
-                new PreProof(aOrNotA, leftContext, Rule.OR_COMPOSITION_LEFT, 0), // 1
-                new PreProof(Expression.create(Operator.IMPL, A, aOrNotA), // 2
-                        context, Rule.DEDUCTION, 1),
-                new PreProof(notA, rightContext, Rule.AXIOM), // 3
-                new PreProof(aOrNotA, rightContext, Rule.OR_COMPOSITION_RIGHT, 3), // 4
-                new PreProof(Expression.create(Operator.IMPL, notA, aOrNotA), context, Rule.DEDUCTION, 4), // 5
-                new PreProof(NProof::contraPosition, 2), // 6
-                new PreProof(NProof::contraPosition, 5), // 7
-                new PreProof(NProof::deductionLeft, 6), // 8
-                new PreProof(NProof::deductionLeft, 7), // 9
-                new PreProof(Nil.getInstance(), context.merge( // 10
-                        Expression.create(Operator.IMPL, aOrNotA, Nil.getInstance())),
-                        Rule.MODUS_PONENS, 9, 8
-                        ),
-                new PreProof(aOrNotA, context, Rule.NOT, 10), // 11
-                new PreProof(left), // 12
-                new PreProof(right), // 13
-                new PreProof(left.getProof().getExpression(), context, Rule.EXCLUDED_MIDDLE_RULE,
-                        12, 13, 11) // 14
-        );
-    }
-
-    public static NProof contraPosition(NProof proof) {
-        Expression expr = proof.getProof().getExpression();
-        List<Expression> sep = Expression.decomposition(
-                proof.getProof().getExpression(),
-                Operator.IMPL);
-
-        Expression left = sep.get(0);
-        Expression right = sep.get(1);
-
-        Expression notLeft = Expression.create(Operator.IMPL, left, Nil.getInstance());
-        Expression notRight = Expression.create(Operator.IMPL, right, Nil.getInstance());
-        Expression contraProof = Expression.create(Operator.IMPL, notRight, notLeft);
-
-        Context immutableContext = proof.getProof().getContext()
-                .merge(
-                        Context.of(expr, notRight, left)
-                );
-
-        return NProof.zip(
-                new PreProof(proof), // 0
-                new PreProof(expr, immutableContext, Rule.AXIOM), // 1
-                new PreProof(left, immutableContext, Rule.AXIOM), // 2
-                new PreProof(right, immutableContext, Rule.MODUS_PONENS, 1, 2), // 3
-                new PreProof(notRight, immutableContext, Rule.AXIOM), // 4
-                new PreProof(Nil.getInstance(), immutableContext, Rule.MODUS_PONENS, 4, 3), // 5
-                new PreProof(notLeft, immutableContext.diff(left), Rule.DEDUCTION, 5), // 6
-                new PreProof( // 7
-                        contraProof, immutableContext.diff(left, notRight), Rule.DEDUCTION, 6),
-                new PreProof( // 8
-                        Expression.create(Operator.IMPL, expr, contraProof),
-                        proof.getProof().getContext(),
-                        Rule.DEDUCTION, 7
-                ),
-                new PreProof(contraProof, proof.getProof().getContext(), Rule.MODUS_PONENS, 8, 0) // 9
-        );
-    }
-
-    public static NProof deductionLeft(NProof proof) {
-        List<Expression> sep = Expression.decomposition(proof.getProof().getExpression(), Operator.IMPL);
-
-        Expression left = sep.get(0);
-        Expression right = sep.get(1);
-
-        Context immutableContext = proof.getProof().getContext().merge(left);
-
-        return NProof.zip(
-                new PreProof(proof, Context.of(left)),
-                new PreProof(left, immutableContext, Rule.AXIOM),
-                new PreProof(right, immutableContext, Rule.MODUS_PONENS, 0, 1)
+                new PreProof(A, contextBase, Rule.AXIOM), // 0
+                new PreProof(aOrNotA, contextBase, Rule.OR_COMPOSITION_LEFT, 0), // 1
+                new PreProof(notAorNotA, contextBase, Rule.AXIOM), // 2
+                new PreProof(Nil.getInstance(), contextBase, Rule.MODUS_PONENS, 2, 1), // 3
+                new PreProof(notA, contextA, Rule.DEDUCTION, 3), // 4
+                new PreProof(aOrNotA, contextA, Rule.OR_COMPOSITION_RIGHT, 4), // 5
+                new PreProof(notAorNotA, contextA, Rule.AXIOM), // 6
+                new PreProof(Nil.getInstance(), contextA, Rule.MODUS_PONENS, 6, 5), // 7
+                new PreProof(aOrNotA, context, Rule.NOT, 7), // 8
+                new PreProof(left), // 9
+                new PreProof(right), // 10
+                new PreProof(expression, context, Rule.EXCLUDED_MIDDLE_RULE, 9, 10, 8) // 11
         );
     }
 }

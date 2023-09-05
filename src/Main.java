@@ -130,7 +130,7 @@ public class Main {
                     .map(Expression::suffixString)
                     .reduce((left, right) -> left + "," + right).orElse("");
             List<Expression> expressions = proofs.get(proofs.size() - 1).unpackDeduction()
-                    .getProofsTree().stream()
+                    .getProofTree().stream()
                     .map(box -> box.getProof().getExpression())
                     .collect(Collectors.toList());
             checkRealExpression(expressions, contextString);

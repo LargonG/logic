@@ -7,77 +7,39 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Context {
-    protected List<Expression> list;
     protected Map<Expression, Integer> map;
-    protected boolean createdList;
-    protected boolean createdMap;
-
-    protected Context() {
-        this.list = null;
-        this.map = null;
-        this.createdList = false;
-        this.createdMap = false;
-    }
-
-    public Context(List<Expression> list) {
-        this.list = list;
-        this.createdList = true;
-        this.map = null;
-        this.createdMap = false;
+    private Context(final Map<Expression, Integer> map,
+                    final boolean doCopy) {
+        this(doCopy ? new HashMap<>(map): map);
     }
 
     public Context(final Map<Expression, Integer> map) {
         this.map = map;
-        this.createdMap = true;
-        this.list = null;
-        this.createdList = false;
     }
 
-    private Context(final List<Expression> list,
-                             final boolean doCopy) {
+    public Context(final List<Expression> list) {
         this(toMap(list));
     }
 
-    private Context(final Map<Expression, Integer> map,
-                             final boolean doCopy) {
-        this(doCopy ? new HashMap<>(map): map);
-    }
-
     public Context(final Context context,
-                            final List<Expression> list) {
+                   final List<Expression> list) {
         super();
         this.map = mergeMaps(context.map, toMap(list));
-        this.createdMap = true;
     }
 
     public Context(final Context context,
                    final Map<Expression, Integer> map) {
         super();
         this.map = mergeMaps(context.map, map);
-        this.createdMap = true;
     }
 
     public Context(final Context context) {
         super();
         this.map = new HashMap<>(context.map);
-        this.createdMap = true;
     }
 
-    protected List<Expression> createList() {
-        return toList(map);
-    }
-
-    protected Map<Expression, Integer> createMap() {
-        return toMap(list);
-    }
-
-    protected final void dropList() {
-        this.list = null;
-        this.createdList = false;
-    }
     protected final void dropMap() {
         this.map = null;
-        this.createdMap = false;
     }
 
     /**
@@ -86,11 +48,7 @@ public class Context {
      * @return список выражений, содержащихся в контексте
      */
     public final List<Expression> getList() {
-        if (!createdList) {
-            this.list = createList();
-            createdList = true;
-        }
-        return list;
+        return toList(map);
     }
 
     /**
@@ -98,10 +56,6 @@ public class Context {
      * @return key -> value, где key - выражение, value - сколько раз встречается в контексте
      */
     public final Map<Expression, Integer> getMap() {
-        if (!createdMap) {
-            this.map = createMap();
-            createdMap = true;
-        }
         return map;
     }
     /**
@@ -130,16 +84,9 @@ public class Context {
      * @return this context or throws UnsupportedOperationException if this context is immutable
      */
     public Context add(Context context) {
-        if (context.createdMap) {
-            for (Map.Entry<Expression, Integer> entry: context.map.entrySet()) {
-                map.merge(entry.getKey(), entry.getValue(), Integer::sum);
-            }
-        } else {
-            for (Expression expression: context.list) {
-                map.merge(expression, 1, Integer::sum);
-            }
+        for (Map.Entry<Expression, Integer> entry: context.map.entrySet()) {
+            map.merge(entry.getKey(), entry.getValue(), Integer::sum);
         }
-
         return this;
     }
 
@@ -163,16 +110,9 @@ public class Context {
      * @return this context or throws UnsupportedOperationException
      */
     public Context remove(Context context) {
-        if (context.createdMap) {
-            for (Map.Entry<Expression, Integer> entry: context.map.entrySet()) {
-                map.merge(entry.getKey(), -entry.getValue(), Integer::sum);
-                removeIfZero(entry.getKey());
-            }
-        } else {
-            for (Expression expression: context.list) {
-                map.merge(expression, -1, Integer::sum);
-                removeIfZero(expression);
-            }
+        for (Map.Entry<Expression, Integer> entry: context.map.entrySet()) {
+            map.merge(entry.getKey(), -entry.getValue(), Integer::sum);
+            removeIfZero(entry.getKey());
         }
         return this;
     }
@@ -202,9 +142,6 @@ public class Context {
      * @return новый контекст, старые не изменился
      */
     public Context merge(Context context) {
-        if (context.createdList) {
-            return new Context(this, context.list);
-        }
         return new Context(this, context.map);
     }
 
@@ -276,7 +213,7 @@ public class Context {
     }
 
     public static Context empty() {
-        return new Context(new ArrayList<>(), false);
+        return new Context(new HashMap<>(), false);
     }
 
 

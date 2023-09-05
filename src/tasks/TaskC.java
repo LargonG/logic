@@ -22,7 +22,7 @@ public class TaskC implements Task {
         List<GProof> proofs = GProof.addMeta(pr);
         GProof leaf = proofs.get(proofs.size() - 1);
 
-        List<MetaProof> tree = leaf.unpackDeduction().getProofsTree();
+        List<MetaProof> tree = leaf.unpackDeduction().getProofTree();
 
         System.out.println(leaf.getProof());
         for (MetaProof node: tree) {

@@ -25,6 +25,7 @@ public class TaskD implements Task {
     @Override
     public void solution(String... args) {
         String line = Util.getLine(System.in);
+//        long start = System.nanoTime();
         Parser<Expression> parser = new ExpressionParser();
         Expression expression = parser.parse(line);
         List<String> variables = expression.getVariablesNames();
@@ -50,11 +51,14 @@ public class TaskD implements Task {
         }
 
         List<NProof> proofs = expression.createNProof();
-        NProof zipped = NProof.zipContext(proofs, variables.size());
+        NProof zipped = NProof.zipContext(proofs, variables);
 
         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FileDescriptor.out), StandardCharsets.UTF_8), 512));
-        zipped.printProofsTree(System.out);
+        zipped.printProofsTree(out);
         out.flush();
+
+//        long end = System.nanoTime();
+//        System.out.println("performance: " + (end - start) / 1e9);
 
 //        List<MetaProof> result = zipped.getProofsTree();
 //        try {
@@ -119,11 +123,11 @@ public class TaskD implements Task {
 
                 List<NProof> proofs = expr.createNProof();
                 for (NProof proof : proofs) {
-                    checkCorrection(proof.getProofsTree().stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
+                    checkCorrection(proof.getProofTree().stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
                 }
-                NProof zipped = NProof.zipContext(proofs, variables.size());
+                NProof zipped = NProof.zipContext(proofs, variables);
 
-                List<MetaProof> result = zipped.getProofsTree();
+                List<MetaProof> result = zipped.getProofTree();
                 for (MetaProof proof : result) {
                     System.out.println(proof);
                 }

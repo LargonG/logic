@@ -19,11 +19,15 @@ public interface Bundle {
         Expression baseLeft = lst.get(0);
         Expression baseRight = lst.get(1);
 
-        if (left.getProof().getExpression().equals(baseLeft) && right.getProof().getExpression().equals(baseRight)) {
+        if (left != null && left.getProof().getExpression().equals(baseLeft)
+                && right != null
+                && right.getProof().getExpression().equals(baseRight)) {
             return all(left, right, what, baseLeft, baseRight);
-        } else if (left.getProof().getExpression().equals(baseLeft)) {
+        } else if (left != null
+                && left.getProof().getExpression().equals(baseLeft)) {
             return left(left, right, what, baseLeft, baseRight);
-        } else if (right.getProof().getExpression().equals(baseRight)) {
+        } else if (right != null
+                && right.getProof().getExpression().equals(baseRight)) {
             return right(left, right, what, baseLeft, baseRight);
         } else {
             return none(left, right, what, baseLeft, baseRight);
