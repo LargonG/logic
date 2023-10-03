@@ -1,9 +1,9 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
+import grammar.proof.context.ImmutableContext;
 
 public class BinaryOr extends BinaryOperator {
     public BinaryOr(Expression left, Expression right) {
@@ -11,7 +11,7 @@ public class BinaryOr extends BinaryOperator {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(ImmutableContext context) {
         NProof leftProof = null;
         NProof rightProof = null;
 

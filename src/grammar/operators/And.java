@@ -3,10 +3,10 @@ package grammar.operators;
 import grammar.Expression;
 import grammar.Nil;
 import grammar.descriptions.natural.Rule;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
+import grammar.proof.context.MutableContext;
 
 public class And implements Bundle {
     protected And() {
@@ -28,7 +28,7 @@ public class And implements Bundle {
                 new PreProof(right), // 1
                 new PreProof(what, Rule.AXIOM), // 2
                 new PreProof(baseRight, what.getContext(), Rule.AND_DECOMPOSITION_RIGHT, 2), // 3
-                new PreProof(Nil.getInstance(), what.getContext(), Context.of(what.getExpression()),
+                new PreProof(Nil.getInstance(), what.getContext(), MutableContext.of(what.getExpression()),
                         Rule.MODUS_PONENS, 1, 3), // 4
                 new PreProof(Expression.create( // 5
                         Operator.IMPL,
@@ -46,7 +46,7 @@ public class And implements Bundle {
                 new PreProof(right), // 1
                 new PreProof(what, Rule.AXIOM), // 2
                 new PreProof(baseLeft, what.getContext(), Rule.AND_DECOMPOSITION_LEFT, 2), // 3
-                new PreProof(Nil.getInstance(), what.getContext(), Context.of(what.getExpression()),
+                new PreProof(Nil.getInstance(), what.getContext(), MutableContext.of(what.getExpression()),
                         Rule.MODUS_PONENS, 0, 3), // 4
                 new PreProof(Expression.create( // 5
                         Operator.IMPL,

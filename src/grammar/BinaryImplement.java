@@ -1,9 +1,9 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
+import grammar.proof.context.ImmutableContext;
 
 public class BinaryImplement extends BinaryOperator {
 
@@ -12,7 +12,7 @@ public class BinaryImplement extends BinaryOperator {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(ImmutableContext context) {
         NProof right = this.right.createNProof(context);
         if (right.getProof().getExpression().equals(this.right)) {
             return operator.createNProof(null, right, new Proof(this, context));

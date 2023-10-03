@@ -1,8 +1,8 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
+import grammar.proof.context.ImmutableContext;
 
 import java.util.Map;
 import java.util.Objects;
@@ -53,7 +53,7 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(ImmutableContext context) {
         throw new UnsupportedOperationException("Unary operators are not supported");
     }
 

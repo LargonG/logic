@@ -3,6 +3,8 @@ package grammar.proof;
 import grammar.Expression;
 import grammar.descriptions.natural.NaturalDescription;
 import grammar.descriptions.natural.Rule;
+import grammar.proof.context.ImmutableContext;
+import grammar.proof.context.MutableContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +16,7 @@ public class PreProof {
     private final Rule rule;
     private final List<Integer> ids;
 
-    private Context pushContext;
+    private MutableContext pushContext;
 
     private NProof nProof;
 
@@ -23,7 +25,7 @@ public class PreProof {
     private PreProof(
             final NProof nProof,
             final Proof proof,
-            final Context pushContext,
+            final MutableContext pushContext,
             final Rule rule,
             final Function<NProof, NProof> create,
             final int... ids) {
@@ -36,7 +38,7 @@ public class PreProof {
     }
 
     public PreProof(final Proof proof,
-                    final Context pushContext,
+                    final MutableContext pushContext,
                     final Rule rule,
                     final int... ids) {
         this(null, proof, pushContext, rule, null, ids);
@@ -49,23 +51,23 @@ public class PreProof {
     }
 
     public PreProof(final Expression expression,
-                    final Context Context,
-                    final Context pushContext,
+                    final ImmutableContext context,
+                    final MutableContext pushContext,
                     final Rule rule,
                     final int... ids
                     ) {
-        this(null, new Proof(expression, Context), pushContext, rule, null, ids);
+        this(null, new Proof(expression, context), pushContext, rule, null, ids);
     }
 
     public PreProof(final Expression expression,
-                    final Context Context,
+                    final ImmutableContext context,
                     final Rule rule,
                     final int... ids) {
-        this(null, new Proof(expression, Context), null, rule, null, ids);
+        this(null, new Proof(expression, context), null, rule, null, ids);
     }
 
     public PreProof(final NProof nProof,
-                    final Context pushContext) {
+                    final MutableContext pushContext) {
         this(nProof, null, pushContext, null, null);
     }
 

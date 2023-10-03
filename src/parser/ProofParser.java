@@ -2,7 +2,7 @@ package parser;
 
 import grammar.Expression;
 import grammar.proof.Proof;
-import grammar.proof.Context;
+import grammar.proof.context.LinkedContext;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -19,7 +19,7 @@ public class ProofParser implements Parser<Proof> {
     public Proof parse(String line) {
         String[] s = line.split("[|]-");
         String[] contextExpressions = s[0].split(",");
-        Context immutableContext = new Context(Arrays
+        LinkedContext immutableContext = new LinkedContext(Arrays
                 .stream(contextExpressions)
                 .map(parser::parse)
                 .filter(Objects::nonNull)

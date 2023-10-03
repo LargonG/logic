@@ -6,6 +6,8 @@ import grammar.Scheme;
 import grammar.descriptions.Description;
 import grammar.descriptions.gilbert.*;
 import grammar.operators.Operator;
+import grammar.proof.context.ImmutableContext;
+import grammar.proof.context.LinkedContext;
 import resolver.Axioms;
 
 import java.io.PrintWriter;
@@ -35,7 +37,7 @@ public class GProof extends MetaProof {
     }
 
     public GProof(final Expression expression,
-                  final Context context,
+                  final ImmutableContext context,
                   final Description description,
                   final int id) {
         super(expression, context, description, id);
@@ -47,7 +49,7 @@ public class GProof extends MetaProof {
     }
 
     public GProof(final Expression expression,
-                  final Context context,
+                  final ImmutableContext context,
                   final Description description) {
         this(expression, context, description, -1);
     }
@@ -77,7 +79,7 @@ public class GProof extends MetaProof {
         Expression alpha = impl.get(0);
         Expression betta = impl.get(1);
 
-        Context newContext = proof.getContext().merge(alpha);
+        ImmutableContext newContext = proof.getContext().merge(alpha);
 
         return new GProof(
                 betta,
@@ -90,7 +92,7 @@ public class GProof extends MetaProof {
     }
 
     public GProof deductionRight(Expression alpha) {
-        Context newContext = proof.getContext().diff(alpha);
+        ImmutableContext newContext = proof.getContext().diff(alpha);
         Expression expression = proof.getExpression();
         Map<String, Expression> mp = new HashMap<String, Expression>() {{
             put("a", alpha);
@@ -173,9 +175,9 @@ public class GProof extends MetaProof {
         GProof root = this;
 
         Expression expression = proof.getExpression();
-        Context Context = proof.getContext();
+        ImmutableContext context = proof.getContext();
         if (description instanceof ModusPonens) {
-            root = new GProof(expression, Context, new ModusPonens(links.get(0), links.get(1)));
+            root = new GProof(expression, context, new ModusPonens(links.get(0), links.get(1)));
         } else if (description instanceof Deduction) {
             GProof before = links.get(0);
             DeductionSteps steps = getDeductionSteps(before, this);
@@ -230,8 +232,8 @@ public class GProof extends MetaProof {
             // Hypothesis
             int hypothesisId = -1;
             if (axiomId == -1
-                    && (hypothesisId = current
-                    .getContext()
+                    && (hypothesisId = ((LinkedContext) current
+                    .getContext())
                     .indexOf(current.getExpression())) != -1) {
                 comment = new Hypothesis(hypothesisId);
             }
@@ -276,7 +278,7 @@ public class GProof extends MetaProof {
                     mergeLists = (oldL, newL) -> {oldL.addAll(newL); return oldL;};
 
             metaProofs.add(new GProof(current, comment, id));
-            List<Expression> impl = Expression.decomposition(current.getExpression(), Operator.IMPL);
+            List<Expression> impl = Expression.separate(current.getExpression(), Operator.IMPL, 1);
             if (impl.size() > 1) {
                 rightPartOfImplication.merge(impl.get(1), new ArrayList<>(Collections.singletonList(id)), mergeLists);
             }

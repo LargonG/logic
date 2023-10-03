@@ -3,10 +3,10 @@ package grammar.operators;
 import grammar.Expression;
 import grammar.Nil;
 import grammar.descriptions.natural.Rule;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
+import grammar.proof.context.MutableContext;
 
 public class Or implements Bundle {
     private NProof or(NProof root, Proof what, boolean left) {
@@ -32,9 +32,9 @@ public class Or implements Bundle {
 
     @Override
     public NProof none(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
-        Context pushContext = Context.of(what.getExpression());
-        Context phi = Context.of(baseLeft);
-        Context pci = Context.of(baseRight);
+        MutableContext pushContext = MutableContext.of(what.getExpression());
+        MutableContext phi = MutableContext.of(baseLeft);
+        MutableContext pci = MutableContext.of(baseRight);
         return NProof.zip(
                 new PreProof(left), // 0
                 new PreProof(right), // 1

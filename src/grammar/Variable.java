@@ -2,8 +2,8 @@ package grammar;
 
 import grammar.descriptions.natural.NaturalDescription;
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
+import grammar.proof.context.ImmutableContext;
 
 import java.util.Map;
 import java.util.Objects;
@@ -47,7 +47,7 @@ public class Variable implements Expression {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(ImmutableContext context) {
         Expression expr = this;
         if (!context.contains(expr)) {
             Expression newExpr = Expression.create(Operator.IMPL, this, Nil.getInstance());

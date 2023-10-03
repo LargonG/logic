@@ -51,6 +51,15 @@ public class TaskD implements Task {
         }
 
         List<NProof> proofs = expression.createNProof();
+
+//        for (NProof proof: proofs) {
+//            List<MetaProof> res = proof.getProofTree();
+//            for (MetaProof r: res) {
+//                System.out.println(r);
+//            }
+//            System.out.println();
+//        }
+
         NProof zipped = NProof.zipContext(proofs, variables);
 
         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(FileDescriptor.out), StandardCharsets.UTF_8), 512));

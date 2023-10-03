@@ -3,23 +3,23 @@ package grammar.operators;
 import grammar.Expression;
 import grammar.Nil;
 import grammar.descriptions.natural.Rule;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
+import grammar.proof.context.MutableContext;
 
 public class Implication implements Bundle {
     @Override
     public NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
         return NProof.zip(
-                new PreProof(right, Context.of(baseLeft)),
+                new PreProof(right, MutableContext.of(baseLeft)),
                 new PreProof(what, Rule.DEDUCTION, 0)
         );
     }
 
     @Override
     public NProof left(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
-        Context pushImmutableContext = Context.of(what.getExpression());
+        MutableContext pushImmutableContext = MutableContext.of(what.getExpression());
         return NProof.zip(
                 new PreProof(left), // 0
                 new PreProof(right), // 1
@@ -47,10 +47,10 @@ public class Implication implements Bundle {
                 new PreProof(right), // 1
                 new PreProof(baseLeft, what.getContext(), Rule.AXIOM), // 2
                 new PreProof(Nil.getInstance(), what.getContext(),
-                        Context.of(right.getProof().getExpression()),
+                        MutableContext.of(right.getProof().getExpression()),
                         Rule.MODUS_PONENS, 0, 2), // 3
                 new PreProof(baseRight, what.getContext(),
-                        Context.of(baseLeft),
+                        MutableContext.of(baseLeft),
                         Rule.NOT, 3), // 4
                 new PreProof(what, Rule.DEDUCTION, 4)
         );

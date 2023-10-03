@@ -6,13 +6,18 @@ import grammar.Variable;
 import grammar.descriptions.natural.NaturalDescription;
 import grammar.descriptions.natural.Rule;
 import grammar.operators.Operator;
+import grammar.proof.context.Context;
+import grammar.proof.context.ImmutableContext;
+import grammar.proof.context.MutableContext;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class NProof extends MetaProof {
-    Context pushContext = null;
+    MutableContext pushContext = null;
 
     public NProof(final Proof proof,
                   final NaturalDescription description) {
@@ -21,13 +26,13 @@ public class NProof extends MetaProof {
 
     public NProof(final Proof proof,
                   final NaturalDescription description,
-                  final Context pushContext) {
+                  final MutableContext pushContext) {
         super(proof, description, -1);
         this.pushContext = pushContext;
     }
 
     public NProof(final Expression expression,
-                  final Context immutableContext,
+                  final ImmutableContext immutableContext,
                   final NaturalDescription description) {
         super(expression, immutableContext, description, -1);
     }
@@ -51,7 +56,7 @@ public class NProof extends MetaProof {
 
     @Override
     public void printProofsTree(PrintWriter out) {
-        printProofsTree(out, Context.empty(), 0);
+        printProofsTree(out, MutableContext.empty(), 0);
     }
 
     private void printProofsTree(PrintWriter out, Context context, int depth) {
@@ -103,7 +108,7 @@ public class NProof extends MetaProof {
 
     void addToPush(Context context) {
         if (this.pushContext == null) {
-            this.pushContext = Context.empty();
+            this.pushContext = MutableContext.empty();
         }
         this.pushContext.add(context);
     }
@@ -159,15 +164,15 @@ public class NProof extends MetaProof {
     private static NProof zipContext(NProof left, NProof right, Expression A) {
 
         Expression expression = left.getProof().getExpression();
-        Context context = left.getProof().getContext().diff(A);
+        ImmutableContext context = left.getProof().getContext().diff(A);
 
         Expression notA = Expression.create(Operator.IMPL, A, Nil.getInstance());
         Expression aOrNotA = Expression.create(Operator.OR, A, notA);
 
         Expression notAorNotA = Expression.create(Operator.IMPL, aOrNotA, Nil.getInstance());
 
-        Context contextA = context.merge(notAorNotA);
-        Context contextBase = contextA.merge(A);
+        ImmutableContext contextA = context.merge(notAorNotA);
+        ImmutableContext contextBase = contextA.merge(A);
         return NProof.zip(
                 new PreProof(A, contextBase, Rule.AXIOM), // 0
                 new PreProof(aOrNotA, contextBase, Rule.OR_COMPOSITION_LEFT, 0), // 1

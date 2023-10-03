@@ -1,6 +1,5 @@
 package grammar.operators;
 
-import grammar.BinaryOperator;
 import grammar.Expression;
 import grammar.proof.NProof;
 import grammar.proof.Proof;

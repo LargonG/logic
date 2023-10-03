@@ -2,13 +2,14 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.operators.Operator;
+import grammar.proof.context.ImmutableContext;
 
 import java.util.List;
 import java.util.Objects;
 
 public class Proof {
     protected final Expression expression;
-    protected final Context immutableContext;
+    protected final ImmutableContext immutableContext;
 
     protected Proof fullContextForm = null;
 
@@ -19,7 +20,7 @@ public class Proof {
      * @param immutableContext -- контекст, список выражений, которые мы считаем за истину
      */
     public Proof(final Expression expression,
-                    final Context immutableContext) {
+                    final ImmutableContext immutableContext) {
         this.expression = expression;
         this.immutableContext = immutableContext;
     }
@@ -29,7 +30,7 @@ public class Proof {
             List<Expression> sep = Expression.separate(expression, Operator.IMPL);
             fullContextForm = new Proof(
                     sep.get(sep.size() - 1),
-                    new Context(immutableContext, sep.subList(0, sep.size() - 1)));
+                    immutableContext.merge(sep.subList(0, sep.size() - 1)));
         }
         return fullContextForm;
     }
@@ -47,7 +48,7 @@ public class Proof {
      * называется контекстом
      * @return контекст (список гипотез)
      */
-    public final Context getContext() {
+    public final ImmutableContext getContext() {
         return immutableContext;
     }
 

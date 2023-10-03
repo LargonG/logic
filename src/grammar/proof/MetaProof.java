@@ -2,6 +2,7 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.descriptions.Description;
+import grammar.proof.context.ImmutableContext;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public abstract class MetaProof {
     }
 
     public MetaProof(final Expression expression,
-                     final Context immutableContext,
+                     final ImmutableContext immutableContext,
                      final Description description,
                      final int id) {
         this.proof = new Proof(expression, immutableContext);
@@ -73,7 +74,7 @@ public abstract class MetaProof {
      * Пояснение к доказательству, из чего оно было получено,
      * внутри себя хранит ссылки на предыдущие доказательства <br>
      * Если хотим получить общую картину доказательства (рекурсивно),
-     * то вызываем метод {@link MetaProof#printProofsTree()}
+     * то вызываем метод {@link MetaProof#printProofsTree(PrintWriter)}
      * @return description
      */
     public Description getDescription() {

@@ -1,8 +1,8 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
+import grammar.proof.context.ImmutableContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +12,7 @@ public interface Expression extends Comparable<Expression> {
     Expression paste(Map<String, Expression> values);
     Expression toNormalForm();
 
-    NProof createNProof(Context context);
+    NProof createNProof(ImmutableContext context);
 
     /**
      * Строит доказательство данного высказывания
@@ -28,7 +28,7 @@ public interface Expression extends Comparable<Expression> {
             }
 
             result.add(createNProof(
-                    new Context(context.entrySet().stream()
+                    new ImmutableContext(context.entrySet().stream()
                             .map(entry -> {
                                 Variable v = new Variable(entry.getKey());
                                 return entry.getValue() ? v :

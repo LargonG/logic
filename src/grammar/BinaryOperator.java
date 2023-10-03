@@ -1,9 +1,9 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.Context;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
+import grammar.proof.context.ImmutableContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,7 +74,7 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
-    public NProof createNProof(Context context) {
+    public NProof createNProof(ImmutableContext context) {
         NProof left = this.left.createNProof(context);
         NProof right = this.right.createNProof(context);
         return operator.createNProof(left, right, new Proof(this, context));
