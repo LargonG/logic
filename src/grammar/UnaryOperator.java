@@ -69,19 +69,4 @@ public class UnaryOperator implements Expression {
     public int hashCode() {
         return Objects.hash(operator, expr);
     }
-
-    @Override
-    public int compareTo(Expression o) {
-        if (o instanceof Scheme || o instanceof BinaryOperator) {
-            return -1;
-        } else if (o instanceof UnaryOperator) {
-            UnaryOperator unary = (UnaryOperator) o;
-            int result = operator.compareTo(unary.operator);
-            if (result == 0) {
-                result = expr.compareTo(unary.expr);
-            }
-            return result;
-        }
-        return 1;
-    }
 }

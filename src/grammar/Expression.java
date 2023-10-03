@@ -7,7 +7,7 @@ import grammar.proof.context.ImmutableContext;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public interface Expression extends Comparable<Expression> {
+public interface Expression {
     boolean calculate(Map<String, Boolean> values);
     Expression paste(Map<String, Expression> values);
     Expression toNormalForm();

@@ -69,13 +69,4 @@ public class Variable implements Expression {
     public int hashCode() {
         return Objects.hash(name);
     }
-
-    @Override
-    public int compareTo(Expression o) {
-        if (o instanceof Variable) {
-            Variable value = (Variable) o;
-            return name.compareTo(value.name);
-        }
-        return -1;
-    }
 }

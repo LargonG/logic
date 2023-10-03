@@ -63,14 +63,4 @@ public class Nil implements Expression {
     public void getVariablesNames(Set<String> result) {
         // do nothing
     }
-
-    @Override
-    public int compareTo(Expression o) {
-        if (o instanceof Variable) {
-            return 1;
-        } else if (o instanceof Nil) {
-            return 0;
-        }
-        return -1;
-    }
 }

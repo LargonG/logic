@@ -92,25 +92,4 @@ public class BinaryOperator implements Expression {
     public int hashCode() {
         return Objects.hash(operator, left, right);
     }
-
-    @Override
-    public int compareTo(Expression o) {
-        if (o instanceof Scheme)
-            return -1;
-        if (o instanceof BinaryOperator) {
-            BinaryOperator bin = (BinaryOperator) o;
-            int result = operator.compareTo(bin.operator);
-
-            if (result == 0) {
-                result = left.compareTo(bin.left);
-            }
-
-            if (result == 0) {
-                result = right.compareTo(bin.right);
-            }
-
-            return result;
-        }
-        return 1;
-    }
 }

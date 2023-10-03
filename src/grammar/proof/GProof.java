@@ -216,8 +216,8 @@ public class GProof extends MetaProof {
 
     public static List<GProof> addMeta(final List<Proof> proofs) {
         List<GProof> metaProofs = new ArrayList<>(proofs.size());
-        Map<Expression, List<Integer>> rightPartOfImplication = new TreeMap<>();
-        Map<Expression, List<Integer>> expressions = new TreeMap<>();
+        Map<Expression, List<Integer>> rightPartOfImplication = new HashMap<>();
+        Map<Expression, List<Integer>> expressions = new HashMap<>();
 
         for (int i = 0; i < proofs.size(); i++) {
             Proof current = proofs.get(i);

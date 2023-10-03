@@ -66,15 +66,6 @@ public class Scheme implements Expression {
         return Objects.hash(name);
     }
 
-    @Override
-    public int compareTo(Expression o) {
-        if (o instanceof Scheme) {
-            Scheme sh = (Scheme) o;
-            return name.compareTo(sh.name);
-        }
-        return 1;
-    }
-
     public static Expression create(String expression, Map<String, Expression> values) {
         return EXPRESSION_PARSER.parse(expression).paste(values);
     }
