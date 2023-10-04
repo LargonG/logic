@@ -1,9 +1,5 @@
 package grammar.predicates.arithmetic;
 
-import grammar.*;
-import grammar.operators.Operator;
-
-import java.util.Map;
 import java.util.Set;
 
 public interface Arithmetic {
