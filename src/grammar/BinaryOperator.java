@@ -1,6 +1,7 @@
 package grammar;
 
 import grammar.operators.Operator;
+import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.Proof;
 import grammar.proof.context.ImmutableContext;
@@ -56,6 +57,29 @@ public class BinaryOperator implements Expression {
     public void getVariablesNames(Set<String> result) {
         left.getVariablesNames(result);
         right.getVariablesNames(result);
+    }
+
+    @Override
+    public void getLettersNames(Set<String> result) {
+        left.getLettersNames(result);
+        right.getLettersNames(result);
+    }
+
+    @Override
+    public void getLetters(Set<Letter> letters) {
+        left.getLetters(letters);
+        right.getLetters(letters);
+    }
+
+    @Override
+    public Expression renameLetter(String oldName, String newName) {
+        Expression newLeft = left.renameLetter(oldName, newName);
+        Expression newRight = right.renameLetter(oldName, newName);
+
+        if (newLeft != left || newRight != right) {
+            return new BinaryOperator(operator, newLeft, newRight);
+        }
+        return this;
     }
 
     @Override

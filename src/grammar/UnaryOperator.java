@@ -1,6 +1,7 @@
 package grammar;
 
 import grammar.operators.Operator;
+import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
 
@@ -40,6 +41,26 @@ public class UnaryOperator implements Expression {
     @Override
     public void getVariablesNames(Set<String> result) {
         expr.getVariablesNames(result);
+    }
+
+    @Override
+    public void getLettersNames(Set<String> result) {
+        expr.getLettersNames(result);
+    }
+
+    @Override
+    public void getLetters(Set<Letter> letters) {
+        expr.getLetters(letters);
+    }
+
+    @Override
+    public Expression renameLetter(String oldName, String newName) {
+        Expression newExpr = expr.renameLetter(oldName, newName);
+
+        if (newExpr != expr) {
+            return new UnaryOperator(operator, newExpr);
+        }
+        return this;
     }
 
     @Override

@@ -22,8 +22,23 @@ public class StringIndexer {
         return value.charAt(cursor++) & 0xff;
     }
 
+    public int readSymbol() {
+        while (cursor < value.length() && Character.isWhitespace(value.codePointAt(cursor))) {
+            cursor++;
+        }
+
+        return read();
+    }
+
     public void back() {
         cursor--;
+    }
+
+    public void debug() {
+        System.out.println("StringIndexer:"
+                + "\nPosition: " + position()
+                + "\nString: " + value
+                );
     }
 
     /**

@@ -1,6 +1,7 @@
 package grammar;
 
 import grammar.operators.Operator;
+import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
 import parser.ExpressionParser;
@@ -36,6 +37,21 @@ public class Scheme implements Expression {
     @Override
     public void getVariablesNames(Set<String> result) {
         // do nothing
+    }
+
+    @Override
+    public void getLettersNames(Set<String> result) {
+        // do nothing
+    }
+
+    @Override
+    public void getLetters(Set<Letter> letters) {
+        // do nothing
+    }
+
+    @Override
+    public Expression renameLetter(String oldName, String newName) {
+        return this;
     }
 
     @Override

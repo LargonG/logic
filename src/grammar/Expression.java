@@ -1,6 +1,7 @@
 package grammar;
 
 import grammar.operators.Operator;
+import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
 
@@ -51,6 +52,11 @@ public interface Expression {
     }
 
     void getVariablesNames(Set<String> result);
+    void getLettersNames(Set<String> result);
+
+    void getLetters(Set<Letter> letters);
+
+    Expression renameLetter(String oldName, String newName);
 
     static Expression create(Operator operator, Expression left, Expression right) {
         if (operator == null) {
@@ -69,6 +75,8 @@ public interface Expression {
             return new BinaryOr(left, right);
         } else if (operator == Operator.IMPL) {
             return new BinaryImplement(left, right);
+        } else if (operator == Operator.AND) {
+            return new BinaryAnd(left, right);
         }
         return new BinaryOperator(operator, left, right);
     }

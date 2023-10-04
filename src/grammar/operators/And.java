@@ -12,6 +12,23 @@ public class And implements Bundle {
     protected And() {
     }
 
+    private NProof and(NProof root, Proof what, Expression base, boolean left) {
+        return NProof.zip(
+                new PreProof(root), // 0
+                new PreProof(what, Rule.AXIOM), // 1
+                new PreProof(base, what.getContext(),
+                        left ? Rule.AND_DECOMPOSITION_RIGHT : Rule.AND_DECOMPOSITION_LEFT, 1), // 2
+                new PreProof(Nil.getInstance(), what.getContext(),
+                        MutableContext.of(what.getExpression()),
+                        Rule.MODUS_PONENS, 0, 2), // 3
+                new PreProof(Expression.create( // 4
+                        Operator.IMPL,
+                        what.getExpression(),
+                        Nil.getInstance()
+                ), what.getContext(), Rule.DEDUCTION, 3)
+        );
+    }
+
     @Override
     public NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
         return NProof.zip(
@@ -23,41 +40,16 @@ public class And implements Bundle {
 
     @Override
     public NProof left(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
-        return NProof.zip(
-                new PreProof(left), // 0
-                new PreProof(right), // 1
-                new PreProof(what, Rule.AXIOM), // 2
-                new PreProof(baseRight, what.getContext(), Rule.AND_DECOMPOSITION_RIGHT, 2), // 3
-                new PreProof(Nil.getInstance(), what.getContext(), MutableContext.of(what.getExpression()),
-                        Rule.MODUS_PONENS, 1, 3), // 4
-                new PreProof(Expression.create( // 5
-                        Operator.IMPL,
-                        what.getExpression(),
-                        Nil.getInstance()
-                ), what.getContext(), Rule.DEDUCTION, 4)
-                // add push context
-        );
+        return and(right, what, baseRight, true);
     }
 
     @Override
     public NProof right(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
-        return NProof.zip(
-                new PreProof(left), // 0
-                new PreProof(right), // 1
-                new PreProof(what, Rule.AXIOM), // 2
-                new PreProof(baseLeft, what.getContext(), Rule.AND_DECOMPOSITION_LEFT, 2), // 3
-                new PreProof(Nil.getInstance(), what.getContext(), MutableContext.of(what.getExpression()),
-                        Rule.MODUS_PONENS, 0, 3), // 4
-                new PreProof(Expression.create( // 5
-                        Operator.IMPL,
-                        what.getExpression(),
-                        Nil.getInstance()
-                ), what.getContext(), Rule.DEDUCTION, 4)
-        );
+        return and(left, what, baseLeft, false);
     }
 
     @Override
     public NProof none(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
-        return right(left, right, what, baseLeft, baseRight);
+        return and(left != null ? left : right, what, left != null ? baseLeft : baseRight, left == null);
     }
 }

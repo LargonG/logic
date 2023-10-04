@@ -2,6 +2,7 @@ package grammar;
 
 import grammar.descriptions.natural.Rule;
 import grammar.operators.Operator;
+import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
@@ -62,5 +63,20 @@ public class Nil implements Expression {
     @Override
     public void getVariablesNames(Set<String> result) {
         // do nothing
+    }
+
+    @Override
+    public void getLettersNames(Set<String> result) {
+        // do nothing
+    }
+
+    @Override
+    public void getLetters(Set<Letter> letters) {
+        // do nothing
+    }
+
+    @Override
+    public Expression renameLetter(String oldName, String newName) {
+        return this;
     }
 }

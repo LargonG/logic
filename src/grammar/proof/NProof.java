@@ -39,7 +39,7 @@ public class NProof extends MetaProof {
 
     @Override
     protected void getProofTree(List<MetaProof> proofs) {
-        pushTree(Context.empty());
+        pushTree(MutableContext.empty());
         getProofsTree(proofs, 0);
     }
 

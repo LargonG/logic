@@ -69,11 +69,11 @@ public class TaskD implements Task {
 //        long end = System.nanoTime();
 //        System.out.println("performance: " + (end - start) / 1e9);
 
-//        List<MetaProof> result = zipped.getProofsTree();
+//        List<MetaProof> result = zipped.getProofTree();
 //        try {
 //            checkCorrection(result.stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
 //        } catch (RuntimeException e) {
-//            zipped.getProofsTree();
+//            zipped.getProofTree();
 //            System.out.println();
 //            checkCorrection(result.stream().map(pr -> (NProof) pr).collect(Collectors.toList()));
 //        }
