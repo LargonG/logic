@@ -4,7 +4,12 @@ import grammar.Expression;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Arithmetic;
 import grammar.predicates.arithmetic.Letter;
+import grammar.proof.GProof;
+import grammar.proof.builder.GProofBuilder;
+import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
+import java.util.Map;
 import java.util.Set;
 
 public class BinaryPredicate implements Predicate {
@@ -43,6 +48,11 @@ public class BinaryPredicate implements Predicate {
     }
 
     @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        return true;
+    }
+
+    @Override
     public Expression renameLetter(String oldName, String newName) {
         Arithmetic newLeft = left.rename(oldName, newName);
         Arithmetic newRight = right.rename(oldName, newName);
@@ -51,5 +61,12 @@ public class BinaryPredicate implements Predicate {
             return new BinaryPredicate(operator, newLeft, newRight);
         }
         return this;
+    }
+
+    @Override
+    public PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations) {
+        // Строим доказательство a -> a
+        GProof res = GProofBuilder.aa(this, ImmutableContext.empty());
+        return new PreliminaryFormStep(null, false, this, res, res);
     }
 }

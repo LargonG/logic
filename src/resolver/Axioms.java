@@ -1,6 +1,8 @@
 package resolver;
 
 import grammar.Expression;
+import grammar.operators.Operator;
+import grammar.predicates.quantifiers.Quantifier;
 import parser.ExpressionParser;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ public final class Axioms {
             add(EXPRESSION_PARSER.parse("(a->b)->(a->!b)->!a"));       // 8
             add(EXPRESSION_PARSER.parse("!!a->a"));                    // 9
         }};
+
         resolver = new Resolver();
     }
 
@@ -45,6 +48,39 @@ public final class Axioms {
             }
             i++;
         }
+
         return -1;
+    }
+
+    public static int isPredicateAxiom(Expression expression, String newName) {
+        int i = isAxiom(expression);
+        if (i == -1) {
+            i = values.size();
+            List<Expression> sep = Expression.separate(expression, Operator.IMPL, 1);
+            if (sep.size() > 1) {
+                Expression left = sep.get(0);
+                Expression right = sep.get(1);
+
+                if (left instanceof Quantifier) {
+                    // (@x.a) -> a[x:=y]
+                    Quantifier leftQ = (Quantifier) left;
+                    if (leftQ.expression.canRenameLetter(leftQ.letter.getName(), newName)
+                            && leftQ.expression.renameLetter(leftQ.letter.getName(), newName).equals(right)) {
+                        i = values.size();
+                    }
+                }
+
+                if (right instanceof Quantifier) {
+                    // a[x:=y] -> ?x.a
+                    Quantifier rightQ = (Quantifier) right;
+                    if (rightQ.expression.canRenameLetter(rightQ.letter.getName(), newName)
+                            && rightQ.expression.renameLetter(rightQ.letter.getName(), newName).equals(left)) {
+                        i = values.size() + 1;
+                    }
+                }
+            }
+        }
+
+        return i;
     }
 }

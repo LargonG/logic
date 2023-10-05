@@ -5,6 +5,7 @@ import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
 import java.util.Map;
 import java.util.Objects;
@@ -48,8 +49,18 @@ public class Variable implements Expression {
     }
 
     @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        return true;
+    }
+
+    @Override
     public Expression renameLetter(String oldName, String newName) {
         return this;
+    }
+
+    @Override
+    public PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

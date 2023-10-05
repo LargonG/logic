@@ -9,21 +9,20 @@ import java.util.List;
 /**
  * Proof is built by deduction
  */
-public class Deduction implements Description {
+public class Deduction extends GuilbertDescription {
     public final GProof link;
-
-    public Deduction(final GProof link) {
-        this.link = link;
-    }
+    private final int id;
 
     public Deduction(final List<GProof> proofs,
                      final int id) {
+        super(GuilbertRule.DEDUCTION, proofs.get(id));
         this.link = proofs.get(id);
+        this.id = id;
     }
 
     @Override
     public String toString() {
-        return "Ded. " + (link.getId() + 1);
+        return "Ded. " + (id + 1);
     }
 
     @Override

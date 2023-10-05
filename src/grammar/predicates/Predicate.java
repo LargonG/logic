@@ -3,6 +3,7 @@ package grammar.predicates;
 import grammar.Expression;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,7 +1,8 @@
 package grammar.descriptions.natural.checker;
 
 import grammar.Expression;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.RuleChecker;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.proof.MetaProof;
 
@@ -29,7 +30,7 @@ public class AndCompositionChecker implements RuleChecker {
     }
 
     @Override
-    public Rule getRule() {
-        return Rule.AND_COMPOSITION;
+    public NaturalRule getRule() {
+        return NaturalRule.AND_COMPOSITION;
     }
 }

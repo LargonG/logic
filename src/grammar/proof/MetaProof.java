@@ -2,6 +2,8 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.descriptions.Description;
+import grammar.descriptions.Rule;
+import grammar.descriptions.gilbert.GuilbertDescription;
 import grammar.proof.context.ImmutableContext;
 
 import java.io.PrintWriter;
@@ -11,23 +13,18 @@ import java.util.List;
 public abstract class MetaProof {
     protected Proof proof;
     protected Description description;
-    protected int id;
 
     public MetaProof(final Proof proof,
-                     final Description description,
-                     final int id) {
+                     final Description description) {
         this.proof = proof;
         this.description = description;
-        this.id = id;
     }
 
     public MetaProof(final Expression expression,
                      final ImmutableContext immutableContext,
-                     final Description description,
-                     final int id) {
+                     final Description description) {
         this.proof = new Proof(expression, immutableContext);
         this.description = description;
-        this.id = id;
     }
 
     /**
@@ -46,26 +43,6 @@ public abstract class MetaProof {
 
     public abstract void printProofsTree(PrintWriter out);
 
-
-    /**
-     * Опциональный индекс, нужен для вывода,
-     * при этом стоит учитывать, что объектом могут обладать сразу несколько коллекций,
-     * или в одной коллекции может лежать сразу несколько ссылок на один и тот же объект,
-     * Поэтому лучше таких случаев избегать
-     * @return id in some collection, that was called last
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * Устанавливает новый {@link MetaProof#getId id}
-     * @param id новый id
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public Proof getProof() {
         return proof;
     }
@@ -83,10 +60,10 @@ public abstract class MetaProof {
 
     @Override
     public String toString() {
-        return metaExpression(getId(), getProof().toString(), getDescription());
+        return metaExpression(getProof().toString(), getDescription());
     }
 
-    public static String metaExpression(int id, String proof, Description description) {
-        return "[" + (id + 1) + "] " + proof + " [" + description + "]";
+    public static <T extends Description> String metaExpression(String proof, T description) {
+        return proof + " [" + description + "]";
     }
 }

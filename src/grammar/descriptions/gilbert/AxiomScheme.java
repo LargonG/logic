@@ -5,10 +5,11 @@ import grammar.descriptions.Description;
 /**
  * Proof is axiom (and what scheme is used (index of scheme))
  */
-public class AxiomScheme implements Description {
+public class AxiomScheme extends GuilbertDescription {
     public final int id;
 
     public AxiomScheme(int id) {
+        super(GuilbertRule.AXIOM);
         this.id = id;
     }
 

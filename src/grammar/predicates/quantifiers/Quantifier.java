@@ -6,13 +6,14 @@ import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public abstract class Quantifier implements Expression {
-    protected final String sign;
-    protected final Letter letter;
-    protected final Expression expression;
+    public final String sign;
+    public final Letter letter;
+    public final Expression expression;
 
     protected Quantifier(final Letter letter,
                          final Expression expression,
@@ -60,5 +61,12 @@ public abstract class Quantifier implements Expression {
     public void getLetters(Set<Letter> letters) {
         expression.getLetters(letters);
         letters.add(letter);
+    }
+
+    @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        Set<String> inside = new HashSet<>();
+        expression.getLettersNames(inside);
+        return !inside.contains(oldName) || !letter.getName().equals(newName);
     }
 }

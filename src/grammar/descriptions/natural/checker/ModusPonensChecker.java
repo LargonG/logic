@@ -1,7 +1,8 @@
 package grammar.descriptions.natural.checker;
 
 import grammar.Expression;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.RuleChecker;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.proof.MetaProof;
 
@@ -26,7 +27,7 @@ public class ModusPonensChecker implements RuleChecker {
     }
 
     @Override
-    public Rule getRule() {
-        return Rule.MODUS_PONENS;
+    public NaturalRule getRule() {
+        return NaturalRule.MODUS_PONENS;
     }
 }

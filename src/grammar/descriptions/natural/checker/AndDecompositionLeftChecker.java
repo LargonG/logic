@@ -1,7 +1,8 @@
 package grammar.descriptions.natural.checker;
 
 import grammar.Expression;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.RuleChecker;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.proof.MetaProof;
 
@@ -24,7 +25,7 @@ public class AndDecompositionLeftChecker implements RuleChecker {
     }
 
     @Override
-    public Rule getRule() {
-        return Rule.AND_DECOMPOSITION_LEFT;
+    public NaturalRule getRule() {
+        return NaturalRule.AND_DECOMPOSITION_LEFT;
     }
 }

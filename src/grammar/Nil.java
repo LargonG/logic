@@ -1,12 +1,13 @@
 package grammar;
 
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
 import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
 import java.util.Map;
 import java.util.Set;
@@ -44,9 +45,9 @@ public class Nil implements Expression {
     public NProof createNProof(ImmutableContext context) {
         ImmutableContext newContext = context.merge(this);
         return NProof.zip(
-                new PreProof(new Proof(this, newContext), Rule.AXIOM),
+                new PreProof(new Proof(this, newContext), NaturalRule.AXIOM),
                 new PreProof(Expression.create(Operator.IMPL, this, this), context,
-                        Rule.DEDUCTION, 0)
+                        NaturalRule.DEDUCTION, 0)
         );
     }
 
@@ -76,7 +77,17 @@ public class Nil implements Expression {
     }
 
     @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        return true;
+    }
+
+    @Override
     public Expression renameLetter(String oldName, String newName) {
         return this;
+    }
+
+    @Override
+    public PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations) {
+        throw new UnsupportedOperationException("???");
     }
 }

@@ -2,7 +2,7 @@ package grammar.operators;
 
 import grammar.Expression;
 import grammar.Nil;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.proof.NProof;
 import grammar.proof.PreProof;
 import grammar.proof.Proof;
@@ -13,7 +13,7 @@ public class Implication implements Bundle {
     public NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
         return NProof.zip(
                 new PreProof(right, MutableContext.of(baseLeft)),
-                new PreProof(what, Rule.DEDUCTION, 0)
+                new PreProof(what, NaturalRule.DEDUCTION, 0)
         );
     }
 
@@ -23,15 +23,15 @@ public class Implication implements Bundle {
         return NProof.zip(
                 new PreProof(left), // 0
                 new PreProof(right), // 1
-                new PreProof(what, Rule.AXIOM), // 2
-                new PreProof(baseRight, what.getContext(), Rule.MODUS_PONENS, 2, 0), // 3
-                new PreProof(Nil.getInstance(), what.getContext(), pushImmutableContext, Rule.MODUS_PONENS, 1, 3), // 4
+                new PreProof(what, NaturalRule.AXIOM), // 2
+                new PreProof(baseRight, what.getContext(), NaturalRule.MODUS_PONENS, 2, 0), // 3
+                new PreProof(Nil.getInstance(), what.getContext(), pushImmutableContext, NaturalRule.MODUS_PONENS, 1, 3), // 4
                 new PreProof( // 5
                         Expression.create(
                                 Operator.IMPL,
                                 what.getExpression(),
                                 Nil.getInstance()),
-                        what.getContext(), Rule.DEDUCTION, 4)
+                        what.getContext(), NaturalRule.DEDUCTION, 4)
         );
     }
 
@@ -45,14 +45,14 @@ public class Implication implements Bundle {
         return NProof.zip(
                 new PreProof(left), // 0
                 new PreProof(right), // 1
-                new PreProof(baseLeft, what.getContext(), Rule.AXIOM), // 2
+                new PreProof(baseLeft, what.getContext(), NaturalRule.AXIOM), // 2
                 new PreProof(Nil.getInstance(), what.getContext(),
                         MutableContext.of(right.getProof().getExpression()),
-                        Rule.MODUS_PONENS, 0, 2), // 3
+                        NaturalRule.MODUS_PONENS, 0, 2), // 3
                 new PreProof(baseRight, what.getContext(),
                         MutableContext.of(baseLeft),
-                        Rule.NOT, 3), // 4
-                new PreProof(what, Rule.DEDUCTION, 4)
+                        NaturalRule.NOT, 3), // 4
+                new PreProof(what, NaturalRule.DEDUCTION, 4)
         );
     }
 }

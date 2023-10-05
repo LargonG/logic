@@ -5,6 +5,7 @@ import grammar.predicates.arithmetic.Letter;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
 import parser.ExpressionParser;
+import util.Renamer;
 
 import java.util.Map;
 import java.util.Objects;
@@ -50,8 +51,18 @@ public class Scheme implements Expression {
     }
 
     @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        return true;
+    }
+
+    @Override
     public Expression renameLetter(String oldName, String newName) {
         return this;
+    }
+
+    @Override
+    public PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations) {
+        throw new UnsupportedOperationException("???");
     }
 
     @Override

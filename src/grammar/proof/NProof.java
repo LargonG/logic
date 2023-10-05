@@ -4,7 +4,7 @@ import grammar.Expression;
 import grammar.Nil;
 import grammar.Variable;
 import grammar.descriptions.natural.NaturalDescription;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.proof.context.Context;
 import grammar.proof.context.ImmutableContext;
@@ -21,20 +21,20 @@ public class NProof extends MetaProof {
 
     public NProof(final Proof proof,
                   final NaturalDescription description) {
-        super(proof, description, -1);
+        super(proof, description);
     }
 
     public NProof(final Proof proof,
                   final NaturalDescription description,
                   final MutableContext pushContext) {
-        super(proof, description, -1);
+        super(proof, description);
         this.pushContext = pushContext;
     }
 
     public NProof(final Expression expression,
                   final ImmutableContext immutableContext,
                   final NaturalDescription description) {
-        super(expression, immutableContext, description, -1);
+        super(expression, immutableContext, description);
     }
 
     @Override
@@ -49,9 +49,7 @@ public class NProof extends MetaProof {
             link.getProofsTree(proofs, depth + 1);
         }
 
-        setId(depth - 1);
         proofs.add(this);
-
     }
 
     @Override
@@ -68,11 +66,11 @@ public class NProof extends MetaProof {
             link.printProofsTree(out, context, depth + 1);
         }
 
-        setId(depth - 1);
         String old = proof.getContext().toString();
         String nes = context.toString();
         String cnt = old.isEmpty() ? nes : nes.isEmpty() ? old : (old + "," + nes);
-        out.println(metaExpression(this.id,
+        out.println("[" + depth + "] " +
+                metaExpression(
                         cnt + "|-" + proof.getExpression().suffixString(), this.description));
         if (pushContext != null) {
             context.remove(pushContext);
@@ -174,18 +172,18 @@ public class NProof extends MetaProof {
         ImmutableContext contextA = context.merge(notAorNotA);
         ImmutableContext contextBase = contextA.merge(A);
         return NProof.zip(
-                new PreProof(A, contextBase, Rule.AXIOM), // 0
-                new PreProof(aOrNotA, contextBase, Rule.OR_COMPOSITION_LEFT, 0), // 1
-                new PreProof(notAorNotA, contextBase, Rule.AXIOM), // 2
-                new PreProof(Nil.getInstance(), contextBase, Rule.MODUS_PONENS, 2, 1), // 3
-                new PreProof(notA, contextA, Rule.DEDUCTION, 3), // 4
-                new PreProof(aOrNotA, contextA, Rule.OR_COMPOSITION_RIGHT, 4), // 5
-                new PreProof(notAorNotA, contextA, Rule.AXIOM), // 6
-                new PreProof(Nil.getInstance(), contextA, Rule.MODUS_PONENS, 6, 5), // 7
-                new PreProof(aOrNotA, context, Rule.NOT, 7), // 8
+                new PreProof(A, contextBase, NaturalRule.AXIOM), // 0
+                new PreProof(aOrNotA, contextBase, NaturalRule.OR_COMPOSITION_LEFT, 0), // 1
+                new PreProof(notAorNotA, contextBase, NaturalRule.AXIOM), // 2
+                new PreProof(Nil.getInstance(), contextBase, NaturalRule.MODUS_PONENS, 2, 1), // 3
+                new PreProof(notA, contextA, NaturalRule.DEDUCTION, 3), // 4
+                new PreProof(aOrNotA, contextA, NaturalRule.OR_COMPOSITION_RIGHT, 4), // 5
+                new PreProof(notAorNotA, contextA, NaturalRule.AXIOM), // 6
+                new PreProof(Nil.getInstance(), contextA, NaturalRule.MODUS_PONENS, 6, 5), // 7
+                new PreProof(aOrNotA, context, NaturalRule.NOT, 7), // 8
                 new PreProof(left), // 9
                 new PreProof(right), // 10
-                new PreProof(expression, context, Rule.EXCLUDED_MIDDLE_RULE, 9, 10, 8) // 11
+                new PreProof(expression, context, NaturalRule.EXCLUDED_MIDDLE_RULE, 9, 10, 8) // 11
         );
     }
 }

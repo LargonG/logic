@@ -21,8 +21,8 @@ public class TaskB implements Task {
                         .collect(Collectors.toList())
         );
 
-        for (GProof proof: proofs) {
-            System.out.println(proof);
+        for (int i = 0; i < proofs.size(); i++) {
+            System.out.println("[" + (i + 1) + "] " + proofs.get(i));
         }
     }
 }

@@ -1,6 +1,6 @@
-package grammar.descriptions.natural.checker;
+package grammar.descriptions;
 
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.proof.MetaProof;
 
 import java.util.List;

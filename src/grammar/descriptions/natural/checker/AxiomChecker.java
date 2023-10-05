@@ -1,6 +1,7 @@
 package grammar.descriptions.natural.checker;
 
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.RuleChecker;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.proof.MetaProof;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class AxiomChecker implements RuleChecker {
     }
 
     @Override
-    public Rule getRule() {
-        return Rule.AXIOM;
+    public NaturalRule getRule() {
+        return NaturalRule.AXIOM;
     }
 }

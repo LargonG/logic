@@ -1,7 +1,8 @@
 package grammar.descriptions.natural.checker;
 
 import grammar.Expression;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.RuleChecker;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.proof.MetaProof;
 
@@ -23,7 +24,7 @@ public class DeductionChecker implements RuleChecker {
     }
 
     @Override
-    public Rule getRule() {
-        return Rule.DEDUCTION;
+    public NaturalRule getRule() {
+        return NaturalRule.DEDUCTION;
     }
 }

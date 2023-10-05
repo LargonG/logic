@@ -1,8 +1,10 @@
 package grammar.descriptions.natural;
 
+import grammar.descriptions.Rule;
+import grammar.descriptions.RuleChecker;
 import grammar.descriptions.natural.checker.*;
 
-public enum Rule {
+public enum NaturalRule implements Rule {
     AXIOM("Ax", 0, new AxiomChecker()),
     MODUS_PONENS("E->", 2, new ModusPonensChecker()),
     DEDUCTION("I->", 1, new DeductionChecker()),
@@ -21,9 +23,9 @@ public enum Rule {
 
     private final RuleChecker checker;
 
-    Rule(final String value,
-         final int count,
-         final RuleChecker checker) {
+    NaturalRule(final String value,
+                final int count,
+                final RuleChecker checker) {
         this.value = value;
         this.count = count;
         this.checker = checker;

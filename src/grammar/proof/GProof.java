@@ -6,6 +6,9 @@ import grammar.Scheme;
 import grammar.descriptions.Description;
 import grammar.descriptions.gilbert.*;
 import grammar.operators.Operator;
+import grammar.predicates.quantifiers.ForAll;
+import grammar.predicates.quantifiers.Quantifier;
+import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
 import grammar.proof.context.LinkedContext;
 import resolver.Axioms;
@@ -31,27 +34,14 @@ public class GProof extends MetaProof {
     }
 
     public GProof(final Proof proof,
-                  final Description description,
-                  final int id) {
-        super(proof, description, id);
+                  final GuilbertDescription description) {
+        super(proof, description);
     }
 
     public GProof(final Expression expression,
                   final ImmutableContext context,
-                  final Description description,
-                  final int id) {
-        super(expression, context, description, id);
-    }
-
-    public GProof(final Proof proof,
-                  final Description description) {
-        this(proof, description, -1);
-    }
-
-    public GProof(final Expression expression,
-                  final ImmutableContext context,
-                  final Description description) {
-        this(expression, context, description, -1);
+                  final GuilbertDescription description) {
+        super(expression, context, description);
     }
 
     @Override
@@ -62,7 +52,6 @@ public class GProof extends MetaProof {
         }
 
         proofs.add(this);
-        setId(proofs.size() - 1);
     }
 
     @Override
@@ -98,7 +87,9 @@ public class GProof extends MetaProof {
             put("a", alpha);
             put("b", expression);
         }};
-        if (description instanceof AxiomScheme || newContext.getMap().getOrDefault(expression, 0) > 0) {
+        if (description instanceof AxiomScheme
+                || description.getRule() == GuilbertRule.AXIOM
+                || newContext.getMap().getOrDefault(expression, 0) > 0) {
             return new GProof(
                     Scheme.create("a->b", mp),
                     newContext,
@@ -136,13 +127,9 @@ public class GProof extends MetaProof {
                             )
                     )
             );
-        } else {
-            assert description instanceof ModusPonens;
-
-            ModusPonens modusPonens = (ModusPonens) description;
-
-            GProof updModus = modusPonens.alpha.deductionRight(alpha);
-            GProof updPonens = modusPonens.alphaImplBetta.deductionRight(alpha);
+        } else if (description instanceof ModusPonens || description.getRule() == GuilbertRule.MODUS_PONENS) {
+            GProof updModus = description.<GProof>getLinks().get(0).deductionRight(alpha);
+            GProof updPonens = description.<GProof>getLinks().get(1).deductionRight(alpha);
 
             mp.put("d", updModus.getProof().getExpression());
             mp.put("f", updPonens.getProof().getExpression());
@@ -166,19 +153,92 @@ public class GProof extends MetaProof {
                             )
                     )
             );
+        } else if (description.getRule() == GuilbertRule.FORALL) {
+            GProof upd = description.<GProof>getLinks().get(0).deductionRight(alpha);
+
+            List<Expression> d = Expression.decomposition(expression, Operator.IMPL);
+
+            Quantifier q = (Quantifier) d.get(1);
+            mp.put("b", d.get(0));
+            mp.put("c", q.expression);
+            mp.put("fc", q);
+
+            List<Object> argsFirst = new ArrayList<Object>() {{
+                add(alpha);
+                add(d.get(0));
+                add(q.expression);
+                add(newContext);
+            }};
+
+            List<Object> argsSecond = new ArrayList<Object>() {{
+                add(alpha);
+                add(d.get(0));
+                add(q);
+                add(newContext);
+            }};
+
+            GProofBuilder builder = new GProofBuilder();
+            builder
+                    .append(upd)
+                    .append(GProofBuilder::deductionForAllHelperFirst, argsFirst)
+                    .append("(a&b)->c", mp, newContext, GuilbertRule.MODUS_PONENS, -2, -1)
+                    .append("(a&b)->fc", mp, newContext, GuilbertRule.FORALL, -1)
+                    .append(GProofBuilder::deductionForAllHelperSecond, argsSecond)
+                    .append("a->b->fc", mp, newContext, GuilbertRule.MODUS_PONENS, -2, -1)
+            ;
+            return builder.get();
+        } else if (description.getRule() == GuilbertRule.EXISTS) {
+            GProof upd = description.<GProof>getLinks().get(0).deductionRight(alpha);
+
+            List<Expression> d = Expression.decomposition(expression, Operator.IMPL);
+
+            Quantifier q = (Quantifier) d.get(0);
+            mp.put("b", q.expression);
+            mp.put("c", d.get(1));
+            mp.put("eb", q);
+
+            List<Object> argsFirst = new ArrayList<Object>() {{
+                add(alpha);
+                add(q.expression);
+                add(d.get(1));
+                add(newContext);
+            }};
+
+            List<Object> argsSecond = new ArrayList<Object>() {{
+                add(alpha);
+                add(d.get(0));
+                add(d.get(1));
+                add(newContext);
+            }};
+
+            GProofBuilder builder = new GProofBuilder();
+            builder
+                    .append(upd)
+                    .append(GProofBuilder::deductionExistHelperFirst, argsFirst)
+                    .append("b->a->c", mp, newContext, GuilbertRule.MODUS_PONENS, -2, -1)
+                    .append("eb->a->c", mp, newContext, GuilbertRule.EXISTS, -1)
+                    .append(GProofBuilder::deductionExistHelperSecond, argsSecond)
+                    .append("a->eb->c", mp, newContext, GuilbertRule.MODUS_PONENS, -2, -1)
+            ;
+            return builder.get();
+        } else {
+            throw new IllegalStateException("Something went wrong..." +
+                    "\nDescription: " + description.getRule());
         }
     }
 
     public GProof unpackDeduction() {
-        List<GProof> links = description.getLinks().stream()
+
+        List<GProof> links = description.getLinks()
+                .stream()
                 .map(link -> ((GProof) link).unpackDeduction()).collect(Collectors.toList());
         GProof root = this;
 
         Expression expression = proof.getExpression();
         ImmutableContext context = proof.getContext();
-        if (description instanceof ModusPonens) {
+        if (description instanceof ModusPonens || description.getRule() == GuilbertRule.MODUS_PONENS) {
             root = new GProof(expression, context, new ModusPonens(links.get(0), links.get(1)));
-        } else if (description instanceof Deduction) {
+        } else if (description instanceof Deduction || description.getRule() == GuilbertRule.DEDUCTION) {
             GProof before = links.get(0);
             DeductionSteps steps = getDeductionSteps(before, this);
 
@@ -221,7 +281,7 @@ public class GProof extends MetaProof {
 
         for (int i = 0; i < proofs.size(); i++) {
             Proof current = proofs.get(i);
-            Description comment = new Incorrect();
+            GuilbertDescription comment = new Incorrect();
 
             // Axiom
             int axiomId;
@@ -277,7 +337,7 @@ public class GProof extends MetaProof {
             BiFunction<List<Integer>, List<Integer>, List<Integer>>
                     mergeLists = (oldL, newL) -> {oldL.addAll(newL); return oldL;};
 
-            metaProofs.add(new GProof(current, comment, id));
+            metaProofs.add(new GProof(current, comment));
             List<Expression> impl = Expression.separate(current.getExpression(), Operator.IMPL, 1);
             if (impl.size() > 1) {
                 rightPartOfImplication.merge(impl.get(1), new ArrayList<>(Collections.singletonList(id)), mergeLists);

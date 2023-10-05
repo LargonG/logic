@@ -1,14 +1,48 @@
 package grammar;
 
+import grammar.descriptions.gilbert.GuilbertRule;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
+import grammar.proof.GProof;
 import grammar.proof.NProof;
+import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public interface Expression {
+    class PreliminaryFormStep {
+        public final Letter letter;
+        public final boolean forall;
+        public final Expression expression;
+
+        public final GProof from;
+        public final GProof to;
+
+        public PreliminaryFormStep(final Letter letter,
+                                   final boolean forall,
+                                   final Expression expression,
+                                   final GProof from,
+                                   final GProof to) {
+            this.letter = letter;
+            this.forall = forall;
+            this.expression = expression;
+            this.from = from;
+            this.to = to;
+        }
+    }
+    class PreliminaryForm {
+        public final GProof from;
+        public final GProof to;
+
+        public PreliminaryForm(GProof from, GProof to) {
+            this.from = from;
+            this.to = to;
+        }
+    }
+
     boolean calculate(Map<String, Boolean> values);
     Expression paste(Map<String, Expression> values);
     Expression toNormalForm();
@@ -52,11 +86,77 @@ public interface Expression {
     }
 
     void getVariablesNames(Set<String> result);
+
+
+    default Set<String> getLettersNames() {
+        Set<String> result = new HashSet<>();
+        getLettersNames(result);
+        return result;
+    }
+
     void getLettersNames(Set<String> result);
+
+//    default Set<String> getFreeLettersNames() {
+//        Map<String, Integer> result = new HashMap<>();
+//        getFreeLettersNames(result);
+//        return result.entrySet().stream()
+//                .filter(entry -> entry.getValue() > 0)
+//                .map(Map.Entry::getKey)
+//                .collect(Collectors.toSet());
+//    }
+//
+//    void getFreeLettersNames(Map<String, Integer> result);
+
+    default Set<Letter> getLetters() {
+        Set<Letter> letters = new HashSet<>();
+        getLetters(letters);
+        return letters;
+    }
 
     void getLetters(Set<Letter> letters);
 
+    boolean canRenameLetter(String oldName, String newName);
     Expression renameLetter(String oldName, String newName);
+
+    PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations);
+    default PreliminaryForm toPreliminaryForm() {
+        Renamer renamer = new Renamer(getLettersNames());
+        GProofBuilder builder = new GProofBuilder();
+        GProof from = GProofBuilder.aa(this, ImmutableContext.empty());
+        GProof to = from;
+        Expression current = this;
+        PreliminaryFormStep step;
+        while(true) {
+            step = current.preliminaryFormStep(renamer, true, false);
+            if (step.letter == null) {
+                break;
+            }
+            GProof stepRight =
+                    GProofBuilder.stepRight(
+                            Collections.singletonList(from),
+                            Collections.singletonList(step.expression));
+            GProof stepLeft =
+                    GProofBuilder.stepLeft(
+                            Collections.singletonList(to),
+                            Collections.singletonList(step.expression));
+            builder
+                    .append(stepRight)
+                    .append(step.from)
+                    .append(((BinaryOperator) stepRight.getProof().getExpression()).right,
+                            ImmutableContext.empty(),
+                            GuilbertRule.MODUS_PONENS, -1, -2);
+            from = builder.get();
+            builder
+                    .append(stepLeft)
+                    .append(step.to)
+                    .append(((BinaryOperator) stepLeft.getProof().getExpression()).right,
+                            ImmutableContext.empty(),
+                            GuilbertRule.MODUS_PONENS, -1, -2);
+            to = builder.get();
+            current = step.expression;
+        }
+        return new PreliminaryForm(from, to);
+    }
 
     static Expression create(Operator operator, Expression left, Expression right) {
         if (operator == null) {

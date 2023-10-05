@@ -76,7 +76,7 @@ public class ExpressionParser implements Parser<Expression> {
             } else if (symbol == '_') {
                 expr = parseNil(symbol, tail);
             } else if (symbol == '?' || symbol == '@') {
-                Letter letter = new Letter(parseWord((char) tail.readSymbol(), tail));
+                Letter letter = parseLetter(parseWord((char) tail.readSymbol(), tail));
 
                 char dot = (char) tail.readSymbol();
                 assert dot == '.';
@@ -150,7 +150,8 @@ public class ExpressionParser implements Parser<Expression> {
 
             // symbol in "()[Letter]{+,*}"
 
-            if (toLogicOperator.containsKey(symbol) || symbol == ')' && brackets == 0) {
+            if (toLogicOperator.containsKey(symbol) || symbol == ')' && brackets == 0
+            || symbol == '=') {
                 tail.back();
                 break;
             }
@@ -208,7 +209,7 @@ public class ExpressionParser implements Parser<Expression> {
         }
 
         if (arithmeticSymbol.contains((char) next)) {
-            Arithmetic left = new Letter(word);
+            Arithmetic left = parseLetter(word);
             if (toArithmeticOperator.containsKey((char) next)) {
                 left = parseArithmetic(null, left, toArithmeticOperator.get((char) next), tail, 0);
                 next = tail.readSymbol();
@@ -226,6 +227,10 @@ public class ExpressionParser implements Parser<Expression> {
             return new Variable(word);
         }
         return new Scheme(word);
+    }
+
+    private Letter parseLetter(String word) {
+        return new Letter(word);
     }
 
     private String parseWord(char start, StringIndexer tail) {

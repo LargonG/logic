@@ -2,8 +2,11 @@ package grammar;
 
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
+import grammar.predicates.quantifiers.Exists;
+import grammar.predicates.quantifiers.ForAll;
 import grammar.proof.NProof;
 import grammar.proof.context.ImmutableContext;
+import util.Renamer;
 
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +57,11 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
+    public boolean canRenameLetter(String oldName, String newName) {
+        return expr.canRenameLetter(oldName, newName);
+    }
+
+    @Override
     public Expression renameLetter(String oldName, String newName) {
         Expression newExpr = expr.renameLetter(oldName, newName);
 
@@ -61,6 +69,11 @@ public class UnaryOperator implements Expression {
             return new UnaryOperator(operator, newExpr);
         }
         return this;
+    }
+
+    @Override
+    public PreliminaryFormStep preliminaryFormStep(Renamer renamer, boolean restruct, boolean operations) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

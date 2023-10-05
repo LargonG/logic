@@ -43,7 +43,7 @@ public class MetaGenerator {
                 put("c", generator.generate(len));
                 put("y", generator.generate(len));
             }}).toNormalForm().suffixString();
-            result[ai] = MetaProof.metaExpression(ai + 1, lines[ai], new AxiomScheme(ai));
+            result[ai] = "[" + (ai + 1) + "] " + MetaProof.metaExpression(lines[ai], new AxiomScheme(ai));
             ai++;
         }
         return new Test(lines, result);

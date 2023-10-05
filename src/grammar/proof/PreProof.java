@@ -2,7 +2,7 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.descriptions.natural.NaturalDescription;
-import grammar.descriptions.natural.Rule;
+import grammar.descriptions.natural.NaturalRule;
 import grammar.proof.context.ImmutableContext;
 import grammar.proof.context.MutableContext;
 
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class PreProof {
     private final Proof proof;
-    private final Rule rule;
+    private final NaturalRule naturalRule;
     private final List<Integer> ids;
 
     private MutableContext pushContext;
@@ -26,44 +26,44 @@ public class PreProof {
             final NProof nProof,
             final Proof proof,
             final MutableContext pushContext,
-            final Rule rule,
+            final NaturalRule naturalRule,
             final Function<NProof, NProof> create,
             final int... ids) {
         this.nProof = nProof;
         this.proof = proof;
         this.pushContext = pushContext;
-        this.rule = rule;
+        this.naturalRule = naturalRule;
         this.create = create;
         this.ids = Arrays.stream(ids).boxed().collect(Collectors.toList());
     }
 
     public PreProof(final Proof proof,
                     final MutableContext pushContext,
-                    final Rule rule,
+                    final NaturalRule naturalRule,
                     final int... ids) {
-        this(null, proof, pushContext, rule, null, ids);
+        this(null, proof, pushContext, naturalRule, null, ids);
     }
 
     public PreProof(final Proof proof,
-                    final Rule rule,
+                    final NaturalRule naturalRule,
                     final int... ids) {
-        this(null, proof, null, rule, null, ids);
+        this(null, proof, null, naturalRule, null, ids);
     }
 
     public PreProof(final Expression expression,
                     final ImmutableContext context,
                     final MutableContext pushContext,
-                    final Rule rule,
+                    final NaturalRule naturalRule,
                     final int... ids
                     ) {
-        this(null, new Proof(expression, context), pushContext, rule, null, ids);
+        this(null, new Proof(expression, context), pushContext, naturalRule, null, ids);
     }
 
     public PreProof(final Expression expression,
                     final ImmutableContext context,
-                    final Rule rule,
+                    final NaturalRule naturalRule,
                     final int... ids) {
-        this(null, new Proof(expression, context), null, rule, null, ids);
+        this(null, new Proof(expression, context), null, naturalRule, null, ids);
     }
 
     public PreProof(final NProof nProof,
@@ -87,7 +87,7 @@ public class PreProof {
             } else {
                 nProof = new NProof(proof,
                         new NaturalDescription(
-                                rule,
+                                naturalRule,
                                 ids.stream().map(others::get)
                                         .collect(Collectors.toList())
                         ), pushContext);
