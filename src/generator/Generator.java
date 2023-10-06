@@ -22,8 +22,9 @@ public class Generator implements IGenerator {
     /**
      * Generate expression, which structure is: <br>
      * binOp(binOp(binOp(...), binOp()), binOp())
+     *
      * @param k -- number of binary operations (k > 0)
-     * @return binOp(binOp(binOp(...), binOp()), binOp()) which deep is k
+     * @return binOp(binOp ( binOp ( ...), binOp()), binOp()) which deep is k
      */
     @Override
     public Expression generate(int k) {
@@ -37,7 +38,7 @@ public class Generator implements IGenerator {
     }
 
     private Operator chooseOperator(int mod) {
-        Operator[] operators = new Operator[] {Operator.OR, Operator.AND, Operator.IMPL, Operator.NOT};
+        Operator[] operators = new Operator[]{Operator.OR, Operator.AND, Operator.IMPL, Operator.NOT};
         return operators[randint(mod)];
     }
 

@@ -1,11 +1,7 @@
 package grammar.descriptions.gilbert;
 
-import grammar.descriptions.Description;
 import grammar.proof.GProof;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**

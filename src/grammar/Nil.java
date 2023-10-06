@@ -15,10 +15,6 @@ import java.util.Set;
 public class Nil implements Expression {
     private final static Nil instance;
 
-    public static Nil getInstance() {
-        return instance;
-    }
-
     static {
         instance = new Nil();
     }
@@ -26,6 +22,11 @@ public class Nil implements Expression {
     private Nil() {
 
     }
+
+    public static Nil getInstance() {
+        return instance;
+    }
+
     @Override
     public boolean calculate(Map<String, Boolean> values) {
         return false;

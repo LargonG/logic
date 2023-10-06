@@ -22,7 +22,7 @@ public class BinaryAnd extends BinaryOperator {
         }
 
         if (leftProof != null && !leftProof.getProof().getExpression().equals(left)
-        || rightProof != null && !rightProof.getProof().getExpression().equals(right)) {
+                || rightProof != null && !rightProof.getProof().getExpression().equals(right)) {
             return operator.createNProof(leftProof, rightProof, new Proof(this, context));
         }
 

@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public final class Axioms {
-    private static final ExpressionParser EXPRESSION_PARSER;
-
     public static final List<Expression> values;
-
+    private static final ExpressionParser EXPRESSION_PARSER;
     private static final Resolver resolver;
 
     static {
@@ -41,7 +39,7 @@ public final class Axioms {
 
     public static int isAxiom(Expression expression) {
         int i = 0;
-        for (Expression axiom: values) {
+        for (Expression axiom : values) {
             Map<String, Expression> memes = new HashMap<>();
             if (resolver.resolve(expression, axiom, memes)) {
                 return i;

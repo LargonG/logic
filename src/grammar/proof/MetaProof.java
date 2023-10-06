@@ -2,8 +2,6 @@ package grammar.proof;
 
 import grammar.Expression;
 import grammar.descriptions.Description;
-import grammar.descriptions.Rule;
-import grammar.descriptions.gilbert.GuilbertDescription;
 import grammar.proof.context.ImmutableContext;
 
 import java.io.PrintWriter;
@@ -27,9 +25,14 @@ public abstract class MetaProof {
         this.description = description;
     }
 
+    public static <T extends Description> String metaExpression(String proof, T description) {
+        return proof + " [" + description + "]";
+    }
+
     /**
      * Возвращает всё дерево доказательства,
      * что связанны с данным доказательством через {@link MetaProof#getDescription() description}
+     *
      * @return result контейнер, где в итоге будут лежать доказательства, которые связаны с нашим
      */
     public List<MetaProof> getProofTree() {
@@ -39,7 +42,6 @@ public abstract class MetaProof {
     }
 
     protected abstract void getProofTree(List<MetaProof> proofs);
-
 
     public abstract void printProofsTree(PrintWriter out);
 
@@ -52,6 +54,7 @@ public abstract class MetaProof {
      * внутри себя хранит ссылки на предыдущие доказательства <br>
      * Если хотим получить общую картину доказательства (рекурсивно),
      * то вызываем метод {@link MetaProof#printProofsTree(PrintWriter)}
+     *
      * @return description
      */
     public Description getDescription() {
@@ -61,9 +64,5 @@ public abstract class MetaProof {
     @Override
     public String toString() {
         return metaExpression(getProof().toString(), getDescription());
-    }
-
-    public static <T extends Description> String metaExpression(String proof, T description) {
-        return proof + " [" + description + "]";
     }
 }

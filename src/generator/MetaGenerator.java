@@ -12,16 +12,6 @@ public class MetaGenerator {
     private final ExpressionParser expressionParser;
     private final IGenerator generator;
 
-    public static class Test {
-        public final String[] lines;
-        public final String[] result;
-
-        public Test(String[] lines, String[] result) {
-            this.lines = lines;
-            this.result = result;
-        }
-    }
-
     public MetaGenerator(IGenerator generator) {
         this.expressionParser = new ExpressionParser();
         this.generator = generator;
@@ -29,6 +19,7 @@ public class MetaGenerator {
 
     /**
      * Creates one expression for each axiom
+     *
      * @param len -- length of the binary operator expression
      * @return generated axioms strings & it's proof representation
      */
@@ -36,7 +27,7 @@ public class MetaGenerator {
         String[] lines = new String[Axioms.values.size()];
         String[] result = new String[Axioms.values.size()];
         int ai = 0;
-        for (Expression axiom: Axioms.values) {
+        for (Expression axiom : Axioms.values) {
             lines[ai] = "|-" + axiom.paste(new HashMap<String, Expression>() {{
                 put("a", generator.generate(len));
                 put("b", generator.generate(len));
@@ -47,5 +38,15 @@ public class MetaGenerator {
             ai++;
         }
         return new Test(lines, result);
+    }
+
+    public static class Test {
+        public final String[] lines;
+        public final String[] result;
+
+        public Test(String[] lines, String[] result) {
+            this.lines = lines;
+            this.result = result;
+        }
     }
 }

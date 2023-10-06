@@ -15,8 +15,7 @@ public enum NaturalRule implements Rule {
     OR_COMPOSITION_RIGHT("Ir|", 1, new OrCompositionRightChecker()),
     EXCLUDED_MIDDLE_RULE("E|", 3, new ExcludedMiddleChecker()),
     NOT("E!!", 1, new NotChecker()),
-    COMMENT("HELP", 2, new ModusPonensChecker())
-    ;
+    COMMENT("HELP", 2, new ModusPonensChecker());
 
     private final String value;
     private final int count;

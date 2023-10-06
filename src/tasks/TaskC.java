@@ -25,7 +25,7 @@ public class TaskC implements Task {
         List<MetaProof> tree = leaf.unpackDeduction().getProofTree();
 
         System.out.println(leaf.getProof());
-        for (MetaProof node: tree) {
+        for (MetaProof node : tree) {
             System.out.println(node.getProof().getExpression().suffixString());
         }
     }

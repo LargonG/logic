@@ -5,9 +5,9 @@ import grammar.proof.Proof;
 
 public enum Operator {
     IMPL(2, false, false, new Implication()),
-    OR  (3, false, true, new Or()),
-    AND (4, false, true, new And()),
-    NOT (5, true, false, new Not());
+    OR(3, false, true, new Or()),
+    AND(4, false, true, new And()),
+    NOT(5, true, false, new Not());
 
     public final int priority;
     public final boolean unary;
@@ -31,11 +31,16 @@ public enum Operator {
     @Override
     public String toString() {
         switch (this) {
-            case OR: return "|";
-            case AND: return "&";
-            case IMPL: return "->";
-            case NOT: return "!";
-            default: throw new RuntimeException("Unexpected Operator type" + this.name());
+            case OR:
+                return "|";
+            case AND:
+                return "&";
+            case IMPL:
+                return "->";
+            case NOT:
+                return "!";
+            default:
+                throw new RuntimeException("Unexpected Operator type" + this.name());
         }
     }
 }

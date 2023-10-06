@@ -9,7 +9,6 @@ import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
 import util.Renamer;
 
-import java.util.Map;
 import java.util.Set;
 
 public class BinaryPredicate implements Predicate {

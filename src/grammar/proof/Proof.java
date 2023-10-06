@@ -16,11 +16,12 @@ public class Proof {
     /**
      * Создаёт конструкцию Proof, которая на бумаге выглядит вот так: <br>
      * {context} |- {expression} [{description}]
-     * @param expression -- выражение, что доказывается с этим контекстом
+     *
+     * @param expression       -- выражение, что доказывается с этим контекстом
      * @param immutableContext -- контекст, список выражений, которые мы считаем за истину
      */
     public Proof(final Expression expression,
-                    final ImmutableContext immutableContext) {
+                 final ImmutableContext immutableContext) {
         this.expression = expression;
         this.immutableContext = immutableContext;
     }
@@ -37,6 +38,7 @@ public class Proof {
 
     /**
      * Выражение, что выводится доказательством
+     *
      * @return выражение
      */
     public final Expression getExpression() {
@@ -46,6 +48,7 @@ public class Proof {
     /**
      * Список выражений, что приняли за истину,
      * называется контекстом
+     *
      * @return контекст (список гипотез)
      */
     public final ImmutableContext getContext() {
@@ -57,6 +60,7 @@ public class Proof {
      * по, с точностью до перестановки, контекстам слева <br>
      * Т.е. сравнивает по {context} |- {expression} <br>
      * Если <code>o.getClass() != this.getClass()</code>, то возвращает false
+     *
      * @param o the reference object with which to compare.
      * @return true, если равны их expression & context
      */

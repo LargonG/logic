@@ -1,7 +1,5 @@
 package grammar.descriptions.gilbert;
 
-import grammar.descriptions.Description;
-
 /**
  * Proof is axiom (and what scheme is used (index of scheme))
  */

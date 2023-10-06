@@ -9,13 +9,9 @@ import grammar.predicates.quantifiers.Quantifier;
 import grammar.proof.GProof;
 import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
-import parser.ExpressionParser;
-import parser.Parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ExistsTransformations {
     public static GProof inLeft(final List<GProof> proofs) {
@@ -152,7 +148,7 @@ public class ExistsTransformations {
                 .append("na->eimpl", w.convert, w.context, GuilbertRule.DEDUCTION, -1)
                 .append(w.builder.get().unpackDeduction())
                 .append("(na->eimpl)->(eb->eimpl)->(na|eb->eimpl)", w.convert, w.context, GuilbertRule.AXIOM)
-                .append("(eb->eimpl)->(na|eb->eimpl)", w.convert, w.context, GuilbertRule.MODUS_PONENS, -2,-1)
+                .append("(eb->eimpl)->(na|eb->eimpl)", w.convert, w.context, GuilbertRule.MODUS_PONENS, -2, -1)
                 .append("na|eb->eimpl", w.convert, w.context, GuilbertRule.MODUS_PONENS, -11, -1)
                 .append(w.proof)
                 .append(GProofBuilder::implToOr, -1)

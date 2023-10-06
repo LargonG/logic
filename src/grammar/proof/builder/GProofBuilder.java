@@ -23,58 +23,9 @@ public class GProofBuilder {
     private final static Parser<Expression> EXPRESSION_PARSER = new ExpressionParser();
 
     List<GProof> proofs;
+
     public GProofBuilder() {
         proofs = new ArrayList<>();
-    }
-
-    public GProofBuilder append(final GProof gProof) {
-        proofs.add(gProof);
-        return this;
-    }
-
-    public GProofBuilder append(final Expression expression,
-                                final ImmutableContext context,
-                                final GuilbertRule rule,
-                                int... ids) {
-        proofs.add(new GProof(expression, context, new GuilbertDescription(rule, toGProofs(ids))));
-        return this;
-    }
-
-    public GProofBuilder append(final String expression,
-                                final Map<String, Expression> pasting,
-                                final ImmutableContext context,
-                                final GuilbertRule rule,
-                                int... ids) {
-        proofs.add(
-                new GProof(parse(expression, pasting),
-                context,
-                new GuilbertDescription(rule, toGProofs(ids))));
-        return this;
-    }
-
-    public GProofBuilder append(final Function<List<GProof>, GProof> func,
-                                final int... ids) {
-        return append(func.apply(toGProofs(ids)));
-    }
-
-    public GProofBuilder append(final BiFunction<List<GProof>, List<Object>, GProof> func,
-                                List<Object> args,
-                                final int... ids) {
-        return append(func.apply(toGProofs(ids), args));
-    }
-
-    private List<GProof> toGProofs(int... ids) {
-        return Arrays.stream(ids).boxed()
-                .map(i -> i >= 0 ? proofs.get(i) : proofs.get(proofs.size() + i))
-                .collect(Collectors.toList());
-    }
-
-    public GProof get() {
-        return proofs.get(proofs.size() - 1);
-    }
-
-    public GProof get(int id) {
-        return proofs.get(proofs.size() + id);
     }
 
     public static GProof mergeImplicationLeft(List<GProof> proofs) {
@@ -111,7 +62,7 @@ public class GProofBuilder {
         ;
         return builder.get().unpackDeduction();
     }
-    
+
     public static GProof mergeImplicationRight(List<GProof> proofs) {
         return mergeImplicationLeft(new ArrayList<GProof>() {{
             add(proofs.get(2));
@@ -520,7 +471,6 @@ public class GProofBuilder {
         return builder.get();
     }
 
-
     public static GProof exclusiveThird(List<GProof> proofs, List<Object> args) {
         assert proofs.isEmpty() && args.size() == 2;
         Expression expression = (Expression) args.get(0);
@@ -673,5 +623,55 @@ public class GProofBuilder {
 
     private static Expression parse(String input, Map<String, Expression> pasting) {
         return EXPRESSION_PARSER.parse(input).paste(pasting);
+    }
+
+    public GProofBuilder append(final GProof gProof) {
+        proofs.add(gProof);
+        return this;
+    }
+
+    public GProofBuilder append(final Expression expression,
+                                final ImmutableContext context,
+                                final GuilbertRule rule,
+                                int... ids) {
+        proofs.add(new GProof(expression, context, new GuilbertDescription(rule, toGProofs(ids))));
+        return this;
+    }
+
+    public GProofBuilder append(final String expression,
+                                final Map<String, Expression> pasting,
+                                final ImmutableContext context,
+                                final GuilbertRule rule,
+                                int... ids) {
+        proofs.add(
+                new GProof(parse(expression, pasting),
+                        context,
+                        new GuilbertDescription(rule, toGProofs(ids))));
+        return this;
+    }
+
+    public GProofBuilder append(final Function<List<GProof>, GProof> func,
+                                final int... ids) {
+        return append(func.apply(toGProofs(ids)));
+    }
+
+    public GProofBuilder append(final BiFunction<List<GProof>, List<Object>, GProof> func,
+                                List<Object> args,
+                                final int... ids) {
+        return append(func.apply(toGProofs(ids), args));
+    }
+
+    private List<GProof> toGProofs(int... ids) {
+        return Arrays.stream(ids).boxed()
+                .map(i -> i >= 0 ? proofs.get(i) : proofs.get(proofs.size() + i))
+                .collect(Collectors.toList());
+    }
+
+    public GProof get() {
+        return proofs.get(proofs.size() - 1);
+    }
+
+    public GProof get(int id) {
+        return proofs.get(proofs.size() + id);
     }
 }

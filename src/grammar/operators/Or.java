@@ -15,6 +15,7 @@ public class Or implements Bundle {
                 new PreProof(what, left ? NaturalRule.OR_COMPOSITION_LEFT : NaturalRule.OR_COMPOSITION_RIGHT, 0)
         );
     }
+
     @Override
     public NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight) {
         return or(left, what, true);

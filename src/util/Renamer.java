@@ -3,9 +3,9 @@ package util;
 import java.util.Set;
 
 public class Renamer {
+    private final Set<String> letters;
     private String base;
     private int iter;
-    private final Set<String> letters;
 
     public Renamer(Set<String> letters) {
         this.letters = letters;

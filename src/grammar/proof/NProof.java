@@ -37,85 +37,6 @@ public class NProof extends MetaProof {
         super(expression, immutableContext, description);
     }
 
-    @Override
-    protected void getProofTree(List<MetaProof> proofs) {
-        pushTree(MutableContext.empty());
-        getProofsTree(proofs, 0);
-    }
-
-    private void getProofsTree(final List<MetaProof> proofs, int depth) {
-        List<NProof> links = description.getLinks();
-        for (NProof link: links) {
-            link.getProofsTree(proofs, depth + 1);
-        }
-
-        proofs.add(this);
-    }
-
-    @Override
-    public void printProofsTree(PrintWriter out) {
-        printProofsTree(out, MutableContext.empty(), 0);
-    }
-
-    private void printProofsTree(PrintWriter out, Context context, int depth) {
-        if (pushContext != null) {
-            context.add(pushContext);
-        }
-        List<NProof> links = description.getLinks();
-        for (NProof link: links) {
-            link.printProofsTree(out, context, depth + 1);
-        }
-
-        String old = proof.getContext().toString();
-        String nes = context.toString();
-        String cnt = old.isEmpty() ? nes : nes.isEmpty() ? old : (old + "," + nes);
-        out.println("[" + depth + "] " +
-                metaExpression(
-                        cnt + "|-" + proof.getExpression().suffixString(), this.description));
-        if (pushContext != null) {
-            context.remove(pushContext);
-        }
-    }
-
-    public void pushTree(Context context) {
-        Context pushed = push(context);
-
-        List<NProof> links = description.getLinks();
-        for (NProof link: links) {
-            link.pushTree(context);
-        }
-
-        if (pushed != null) {
-            context.remove(pushed);
-        }
-    }
-
-    private Context push(Context context) {
-        if (pushContext != null) {
-            context.add(this.pushContext);
-        }
-        Context pushed = this.pushContext;
-        this.proof = new Proof(proof.getExpression(), proof.getContext().merge(context));
-        this.pushContext = null;
-        return pushed;
-    }
-
-    public boolean check() {
-        return getDescription().getRule().getChecker().check(this, description.getLinks());
-    }
-
-    void addToPush(Context context) {
-        if (this.pushContext == null) {
-            this.pushContext = MutableContext.empty();
-        }
-        this.pushContext.add(context);
-    }
-
-    @Override
-    public NaturalDescription getDescription() {
-        return (NaturalDescription) description;
-    }
-
     public static NProof zip(final List<PreProof> proofs) {
         List<NProof> result = new ArrayList<>(proofs.size());
         for (PreProof pre : proofs) {
@@ -130,7 +51,7 @@ public class NProof extends MetaProof {
     }
 
     public static NProof zipContext(List<NProof> proofs,
-                                          List<String> vars) {
+                                    List<String> vars) {
         final int N = vars.size();
         List<NProof> container = Collections.emptyList();
         for (int i = 0; i < N; i++) {
@@ -185,5 +106,84 @@ public class NProof extends MetaProof {
                 new PreProof(right), // 10
                 new PreProof(expression, context, NaturalRule.EXCLUDED_MIDDLE_RULE, 9, 10, 8) // 11
         );
+    }
+
+    @Override
+    protected void getProofTree(List<MetaProof> proofs) {
+        pushTree(MutableContext.empty());
+        getProofsTree(proofs, 0);
+    }
+
+    private void getProofsTree(final List<MetaProof> proofs, int depth) {
+        List<NProof> links = description.getLinks();
+        for (NProof link : links) {
+            link.getProofsTree(proofs, depth + 1);
+        }
+
+        proofs.add(this);
+    }
+
+    @Override
+    public void printProofsTree(PrintWriter out) {
+        printProofsTree(out, MutableContext.empty(), 0);
+    }
+
+    private void printProofsTree(PrintWriter out, Context context, int depth) {
+        if (pushContext != null) {
+            context.add(pushContext);
+        }
+        List<NProof> links = description.getLinks();
+        for (NProof link : links) {
+            link.printProofsTree(out, context, depth + 1);
+        }
+
+        String old = proof.getContext().toString();
+        String nes = context.toString();
+        String cnt = old.isEmpty() ? nes : nes.isEmpty() ? old : (old + "," + nes);
+        out.println("[" + depth + "] " +
+                metaExpression(
+                        cnt + "|-" + proof.getExpression().suffixString(), this.description));
+        if (pushContext != null) {
+            context.remove(pushContext);
+        }
+    }
+
+    public void pushTree(Context context) {
+        Context pushed = push(context);
+
+        List<NProof> links = description.getLinks();
+        for (NProof link : links) {
+            link.pushTree(context);
+        }
+
+        if (pushed != null) {
+            context.remove(pushed);
+        }
+    }
+
+    private Context push(Context context) {
+        if (pushContext != null) {
+            context.add(this.pushContext);
+        }
+        Context pushed = this.pushContext;
+        this.proof = new Proof(proof.getExpression(), proof.getContext().merge(context));
+        this.pushContext = null;
+        return pushed;
+    }
+
+    public boolean check() {
+        return getDescription().getRule().getChecker().check(this, description.getLinks());
+    }
+
+    void addToPush(Context context) {
+        if (this.pushContext == null) {
+            this.pushContext = MutableContext.empty();
+        }
+        this.pushContext.add(context);
+    }
+
+    @Override
+    public NaturalDescription getDescription() {
+        return (NaturalDescription) description;
     }
 }

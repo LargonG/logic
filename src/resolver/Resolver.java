@@ -26,10 +26,9 @@ public class Resolver {
      * scheme = BinOp(AND, Var(A), Var(B)) <br>
      * returns false <br>
      *
-     *
      * @param expression -- выражение, которое должно соответствовать определённой структуре
-     * @param scheme -- выражение с эталонной структурой
-     * @param memes -- scheme -> expression
+     * @param scheme     -- выражение с эталонной структурой
+     * @param memes      -- scheme -> expression
      * @return true, if structure of <code>expression</code> is equals to <code>scheme</code> structure
      */
     public boolean resolve(Expression expression, Expression scheme, Map<String, Expression> memes) {

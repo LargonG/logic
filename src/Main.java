@@ -143,7 +143,7 @@ public class Main {
         List<String> lines = expressions.stream()
                 .map(expression -> contextString + "|-" + expression.suffixString()).collect(Collectors.toList());
         List<GProof> check = GProof.addMeta(lines.stream().map(proofParser::parse).collect(Collectors.toList()));
-        for (GProof p: check) {
+        for (GProof p : check) {
             if (p.getDescription() instanceof Deduction || p.getDescription() instanceof Incorrect) {
                 throw new RuntimeException();
             }

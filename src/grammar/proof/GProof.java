@@ -3,10 +3,8 @@ package grammar.proof;
 import grammar.BinaryOperator;
 import grammar.Expression;
 import grammar.Scheme;
-import grammar.descriptions.Description;
 import grammar.descriptions.gilbert.*;
 import grammar.operators.Operator;
-import grammar.predicates.quantifiers.ForAll;
 import grammar.predicates.quantifiers.Quantifier;
 import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
@@ -19,20 +17,6 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class GProof extends MetaProof {
-    private static class DeductionSteps {
-        private final List<Expression> left;
-        private final List<Expression> right;
-        private final Expression subExpression;
-
-        private DeductionSteps(final List<Expression> left,
-                               final List<Expression> right,
-                               final Expression subExpression) {
-            this.left = left;
-            this.right = right;
-            this.subExpression = subExpression;
-        }
-    }
-
     public GProof(final Proof proof,
                   final GuilbertDescription description) {
         super(proof, description);
@@ -44,10 +28,87 @@ public class GProof extends MetaProof {
         super(expression, context, description);
     }
 
+    public static List<GProof> addMeta(final List<Proof> proofs) {
+        List<GProof> metaProofs = new ArrayList<>(proofs.size());
+        Map<Expression, List<Integer>> rightPartOfImplication = new HashMap<>();
+        Map<Expression, List<Integer>> expressions = new HashMap<>();
+
+        for (int i = 0; i < proofs.size(); i++) {
+            Proof current = proofs.get(i);
+            GuilbertDescription comment = new Incorrect();
+
+            // Axiom
+            int axiomId;
+            if ((axiomId = Axioms.isAxiom(current.getExpression())) != -1) {
+                comment = new AxiomScheme(axiomId);
+            }
+
+            // Hypothesis
+            int hypothesisId = -1;
+            if (axiomId == -1
+                    && (hypothesisId = ((LinkedContext) current
+                    .getContext())
+                    .indexOf(current.getExpression())) != -1) {
+                comment = new Hypothesis(hypothesisId);
+            }
+
+            // Modus Ponens
+            int modus = -1, ponens = -1;
+            if (axiomId == -1 && hypothesisId == -1) {
+                for (int implI : rightPartOfImplication.getOrDefault(current.getExpression(), Collections.emptyList())) {
+                    Proof implicationProof = metaProofs.get(implI).getProof();
+                    BinaryOperator impl = (BinaryOperator) implicationProof.getExpression();
+                    if (implicationProof.getContext().equals(current.getContext())) {
+                        for (int ai : expressions.getOrDefault(impl.left, Collections.emptyList())) {
+                            Proof alphaProof = metaProofs.get(ai).getProof();
+                            if (alphaProof.getContext().equals(current.getContext())) {
+                                modus = ai;
+                                ponens = implI;
+                                comment = new ModusPonens(metaProofs, modus, ponens);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Deduction
+            int dedId = -1;
+            if (axiomId == -1 && hypothesisId == -1 && modus == -1 && ponens == -1) {
+                for (int proofId = 0; proofId < metaProofs.size(); proofId++) {
+                    Proof proof = metaProofs.get(proofId).getProof();
+                    if (proof.getFullContextForm().equals(current.getFullContextForm())) {
+                        dedId = proofId;
+                        comment = new Deduction(metaProofs, dedId);
+                        break;
+                    }
+                }
+            }
+
+            // adding new params
+
+            // proof
+            int id = i;
+            BiFunction<List<Integer>, List<Integer>, List<Integer>>
+                    mergeLists = (oldL, newL) -> {
+                oldL.addAll(newL);
+                return oldL;
+            };
+
+            metaProofs.add(new GProof(current, comment));
+            List<Expression> impl = Expression.separate(current.getExpression(), Operator.IMPL, 1);
+            if (impl.size() > 1) {
+                rightPartOfImplication.merge(impl.get(1), new ArrayList<>(Collections.singletonList(id)), mergeLists);
+            }
+            expressions.merge(current.getExpression(), new ArrayList<>(Collections.singletonList(id)), mergeLists);
+        }
+
+        return metaProofs;
+    }
+
     @Override
     protected void getProofTree(List<MetaProof> proofs) {
         List<GProof> links = description.getLinks();
-        for (GProof link: links) {
+        for (GProof link : links) {
             link.getProofTree(proofs);
         }
 
@@ -57,7 +118,7 @@ public class GProof extends MetaProof {
     @Override
     public void printProofsTree(PrintWriter out) {
         List<MetaProof> proofs = getProofTree();
-        for (MetaProof proof: proofs) {
+        for (MetaProof proof : proofs) {
             out.println(proof);
         }
     }
@@ -243,11 +304,11 @@ public class GProof extends MetaProof {
             DeductionSteps steps = getDeductionSteps(before, this);
 
             root = before;
-            for (Expression left: steps.left) {
+            for (Expression left : steps.left) {
                 root = root.deductionLeft();
             }
 
-            for (Expression right: steps.right) {
+            for (Expression right : steps.right) {
                 root = root.deductionRight(right);
             }
         }
@@ -274,77 +335,17 @@ public class GProof extends MetaProof {
         return new DeductionSteps(from, to, subExpression);
     }
 
-    public static List<GProof> addMeta(final List<Proof> proofs) {
-        List<GProof> metaProofs = new ArrayList<>(proofs.size());
-        Map<Expression, List<Integer>> rightPartOfImplication = new HashMap<>();
-        Map<Expression, List<Integer>> expressions = new HashMap<>();
+    private static class DeductionSteps {
+        private final List<Expression> left;
+        private final List<Expression> right;
+        private final Expression subExpression;
 
-        for (int i = 0; i < proofs.size(); i++) {
-            Proof current = proofs.get(i);
-            GuilbertDescription comment = new Incorrect();
-
-            // Axiom
-            int axiomId;
-            if ((axiomId = Axioms.isAxiom(current.getExpression())) != -1) {
-                comment = new AxiomScheme(axiomId);
-            }
-
-            // Hypothesis
-            int hypothesisId = -1;
-            if (axiomId == -1
-                    && (hypothesisId = ((LinkedContext) current
-                    .getContext())
-                    .indexOf(current.getExpression())) != -1) {
-                comment = new Hypothesis(hypothesisId);
-            }
-
-            // Modus Ponens
-            int modus = -1, ponens = -1;
-            if (axiomId == -1 && hypothesisId == -1) {
-                for (int implI : rightPartOfImplication.getOrDefault(current.getExpression(), Collections.emptyList())) {
-                    Proof implicationProof = metaProofs.get(implI).getProof();
-                    BinaryOperator impl = (BinaryOperator) implicationProof.getExpression();
-                    if (implicationProof.getContext().equals(current.getContext())) {
-                        for (int ai : expressions.getOrDefault(impl.left, Collections.emptyList())) {
-                            Proof alphaProof = metaProofs.get(ai).getProof();
-                            if (alphaProof.getContext().equals(current.getContext())) {
-                                modus = ai;
-                                ponens = implI;
-                                comment = new ModusPonens(metaProofs, modus, ponens);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Deduction
-            int dedId = -1;
-            if (axiomId == -1 && hypothesisId == -1 && modus == -1 && ponens == -1) {
-                for (int proofId = 0; proofId < metaProofs.size(); proofId++) {
-                    Proof proof = metaProofs.get(proofId).getProof();
-                    if (proof.getFullContextForm().equals(current.getFullContextForm())) {
-                        dedId = proofId;
-                        comment = new Deduction(metaProofs, dedId);
-                        break;
-                    }
-                }
-            }
-
-            // adding new params
-
-            // proof
-            int id = i;
-            BiFunction<List<Integer>, List<Integer>, List<Integer>>
-                    mergeLists = (oldL, newL) -> {oldL.addAll(newL); return oldL;};
-
-            metaProofs.add(new GProof(current, comment));
-            List<Expression> impl = Expression.separate(current.getExpression(), Operator.IMPL, 1);
-            if (impl.size() > 1) {
-                rightPartOfImplication.merge(impl.get(1), new ArrayList<>(Collections.singletonList(id)), mergeLists);
-            }
-            expressions.merge(current.getExpression(), new ArrayList<>(Collections.singletonList(id)), mergeLists);
+        private DeductionSteps(final List<Expression> left,
+                               final List<Expression> right,
+                               final Expression subExpression) {
+            this.left = left;
+            this.right = right;
+            this.subExpression = subExpression;
         }
-
-        return metaProofs;
     }
 }

@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface Bundle {
     NProof all(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
+
     NProof left(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
+
     NProof right(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
+
     NProof none(NProof left, NProof right, Proof what, Expression baseLeft, Expression baseRight);
 
     default NProof createNProof(NProof left, NProof right, Proof what) {

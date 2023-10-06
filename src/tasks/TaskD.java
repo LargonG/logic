@@ -40,7 +40,7 @@ public class TaskD implements Task {
                         variablesValues
                                 .entrySet()
                                 .stream()
-                                .map(entry ->entry.getKey() + ":=" + (entry.getValue() ? "T" : "F"))
+                                .map(entry -> entry.getKey() + ":=" + (entry.getValue() ? "T" : "F"))
                                 .reduce(
                                         (String left, String right) -> left + "," + right
                                 ).orElse("")
@@ -80,12 +80,12 @@ public class TaskD implements Task {
     }
 
     private void checkCorrection(final List<NProof> result) {
-        for (NProof proof: result) {
+        for (NProof proof : result) {
             if (!proof.check()) {
                 System.out.println("Illegal proof:");
                 System.out.println(proof);
                 System.out.println("children:");
-                for (MetaProof child: proof.getDescription().getLinks()) {
+                for (MetaProof child : proof.getDescription().getLinks()) {
                     System.out.println(child);
                 }
                 throw new RuntimeException("Illegal proof description");

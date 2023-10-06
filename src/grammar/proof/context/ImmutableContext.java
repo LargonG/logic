@@ -34,6 +34,14 @@ public class ImmutableContext extends AbstractContext {
         this(Arrays.asList(expressions), false);
     }
 
+    public static ImmutableContext empty() {
+        return EMPTY;
+    }
+
+    public static ImmutableContext of(Expression... expressions) {
+        return new ImmutableContext(expressions);
+    }
+
     @Override
     public final void remove(Expression... expressions) {
         throw new UnsupportedOperationException(errorMessage);
@@ -72,7 +80,7 @@ public class ImmutableContext extends AbstractContext {
     @Override
     public ImmutableContext merge(List<Expression> list) {
         Map<Expression, Integer> mp = new HashMap<>(getMap());
-        for (Expression expression: list) {
+        for (Expression expression : list) {
             mp.merge(expression, 1, Integer::sum);
         }
         return new ImmutableContext(mp, false);
@@ -134,13 +142,5 @@ public class ImmutableContext extends AbstractContext {
             list = Collections.unmodifiableList(Context.toList(map));
         }
         return list;
-    }
-
-    public static ImmutableContext empty() {
-        return EMPTY;
-    }
-
-    public static ImmutableContext of(Expression... expressions) {
-        return new ImmutableContext(expressions);
     }
 }

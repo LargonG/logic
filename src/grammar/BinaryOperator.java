@@ -2,9 +2,7 @@ package grammar;
 
 import grammar.descriptions.gilbert.GuilbertRule;
 import grammar.operators.Operator;
-import grammar.predicates.BinaryPredicate;
 import grammar.predicates.arithmetic.Letter;
-import grammar.predicates.quantifiers.Exists;
 import grammar.predicates.quantifiers.ForAll;
 import grammar.predicates.quantifiers.Quantifier;
 import grammar.proof.GProof;
@@ -13,28 +11,22 @@ import grammar.proof.Proof;
 import grammar.proof.builder.GProofBuilder;
 import grammar.proof.builder.transformations.ExistsTransformations;
 import grammar.proof.builder.transformations.ForAllTransformations;
-import grammar.proof.builder.transformations.Workspace;
-import grammar.proof.context.Context;
 import grammar.proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.*;
 import java.util.function.BiFunction;
 
-import static sun.text.normalizer.UTF16.append;
-
 public class BinaryOperator implements Expression {
-    public final Operator operator;
-    public final Expression left;
-    public final Expression right;
-
     private final static Map<Operator, BiFunction<Boolean, Boolean, Boolean>> mapping =
-            new HashMap<Operator, BiFunction<Boolean, Boolean, Boolean>>()
-            {{
+            new HashMap<Operator, BiFunction<Boolean, Boolean, Boolean>>() {{
                 put(Operator.OR, (left, right) -> left || right);
                 put(Operator.AND, (left, right) -> left && right);
                 put(Operator.IMPL, (left, right) -> !left || right);
             }};
+    public final Operator operator;
+    public final Expression left;
+    public final Expression right;
 
     public BinaryOperator(Operator operator, Expression left, Expression right) {
         this.operator = operator;
@@ -115,7 +107,6 @@ public class BinaryOperator implements Expression {
         PreliminaryFormStep r = right.preliminaryFormStep(renamer, l.letter == null, true);
 
 
-
         if (l.letter == null && r.letter == null) {
             // Не выносим никакого квантора, значит возвращаем наше же поддерево
             GProof res = GProofBuilder.aa(this, ImmutableContext.empty());
@@ -183,8 +174,8 @@ public class BinaryOperator implements Expression {
 
         builder
                 .append(Expression.create(
-                        Operator.IMPL, bd, builder.get().getProof().getExpression()),
-                ImmutableContext.empty(), GuilbertRule.DEDUCTION, -1)
+                                Operator.IMPL, bd, builder.get().getProof().getExpression()),
+                        ImmutableContext.empty(), GuilbertRule.DEDUCTION, -1)
                 .append(builder.get().unpackDeduction())
                 .append(GProofBuilder::transitive, 4, -1)
         ;
@@ -211,7 +202,7 @@ public class BinaryOperator implements Expression {
 
         builder
                 .append(Expression.create(
-                        Operator.IMPL, qbd, bd),
+                                Operator.IMPL, qbd, bd),
                         ImmutableContext.empty(), GuilbertRule.DEDUCTION, -1)
                 .append(builder.get().unpackDeduction())
                 .append(GProofBuilder::transitive, 5, -1);

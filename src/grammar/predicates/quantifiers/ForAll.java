@@ -8,7 +8,9 @@ import grammar.proof.builder.GProofBuilder;
 import grammar.proof.context.ImmutableContext;
 import util.Renamer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 public class ForAll extends Quantifier {
     public ForAll(Letter letter, Expression expression) {

@@ -1,6 +1,5 @@
 package grammar.descriptions.gilbert;
 
-import grammar.descriptions.Description;
 import grammar.proof.GProof;
 
 import java.util.Collections;

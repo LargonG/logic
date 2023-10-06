@@ -38,13 +38,12 @@ public class StringIndexer {
         System.out.println("StringIndexer:"
                 + "\nPosition: " + position()
                 + "\nString: " + value
-                );
+        );
     }
 
     /**
-     *
      * @param start inclusive
-     * @param end exclusive
+     * @param end   exclusive
      * @return substring
      */
     public String substring(int start, int end) {

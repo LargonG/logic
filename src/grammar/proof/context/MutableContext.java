@@ -22,30 +22,38 @@ public class MutableContext extends AbstractContext {
         this(Arrays.asList(expressions));
     }
 
+    public static MutableContext empty() {
+        return new MutableContext();
+    }
+
+    public static MutableContext of(Expression... expressions) {
+        return new MutableContext(expressions);
+    }
+
     @Override
     public void add(Expression... expressions) {
-        for (Expression expression: expressions) {
+        for (Expression expression : expressions) {
             map.merge(expression, 1, Integer::sum);
         }
     }
 
     @Override
     public void add(List<Expression> list) {
-        for (Expression expression: list) {
+        for (Expression expression : list) {
             map.merge(expression, 1, Integer::sum);
         }
     }
 
     @Override
     public void add(Context context) {
-        for (Map.Entry<Expression, Integer> entry: context.getMap().entrySet()) {
+        for (Map.Entry<Expression, Integer> entry : context.getMap().entrySet()) {
             map.merge(entry.getKey(), entry.getValue(), Integer::sum);
         }
     }
 
     @Override
     public void remove(Expression... expressions) {
-        for (Expression expression: expressions) {
+        for (Expression expression : expressions) {
             map.merge(expression, -1, Integer::sum);
             removeIfZero(expression);
         }
@@ -53,7 +61,7 @@ public class MutableContext extends AbstractContext {
 
     @Override
     public void remove(List<Expression> list) {
-        for (Expression expression: list) {
+        for (Expression expression : list) {
             map.merge(expression, -1, Integer::sum);
             removeIfZero(expression);
         }
@@ -61,7 +69,7 @@ public class MutableContext extends AbstractContext {
 
     @Override
     public void remove(Context context) {
-        for (Map.Entry<Expression, Integer> entry: context.getMap().entrySet()) {
+        for (Map.Entry<Expression, Integer> entry : context.getMap().entrySet()) {
             map.merge(entry.getKey(), -entry.getValue(), Integer::sum);
             removeIfZero(entry.getKey());
         }
@@ -140,13 +148,5 @@ public class MutableContext extends AbstractContext {
     @Override
     public List<Expression> getList() {
         return Context.toList(map);
-    }
-
-    public static MutableContext empty() {
-        return new MutableContext();
-    }
-
-    public static MutableContext of(Expression... expressions) {
-        return new MutableContext(expressions);
     }
 }

@@ -15,23 +15,14 @@ import java.util.Map;
 
 public class Workspace {
     private final static Parser<Expression> PARSER = new ExpressionParser();
-    public static Expression parse(String input, Map<String, Expression> pasting) {
-        return PARSER.parse(input).paste(pasting);
-    }
-
     public final GProof proof;
     public final ImmutableContext context;
-
     public final Expression left;
     public final Expression right;
     public final Expression self;
-
     public final Expression impl;
-
     public final Quantifier quantifier;
-
     public final Map<String, Expression> convert;
-
     public final GProofBuilder builder;
 
     Workspace(final GProof proof, boolean forall, boolean getIn, boolean checkLeft) {
@@ -81,5 +72,9 @@ public class Workspace {
 
         this.quantifier = quant;
         this.builder = new GProofBuilder();
+    }
+
+    public static Expression parse(String input, Map<String, Expression> pasting) {
+        return PARSER.parse(input).paste(pasting);
     }
 }

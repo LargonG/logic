@@ -55,7 +55,7 @@ public class PreProof {
                     final MutableContext pushContext,
                     final NaturalRule naturalRule,
                     final int... ids
-                    ) {
+    ) {
         this(null, new Proof(expression, context), pushContext, naturalRule, null, ids);
     }
 

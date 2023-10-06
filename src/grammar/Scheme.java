@@ -20,6 +20,10 @@ public class Scheme implements Expression {
         this.name = name;
     }
 
+    public static Expression create(String expression, Map<String, Expression> values) {
+        return EXPRESSION_PARSER.parse(expression).paste(values);
+    }
+
     @Override
     public boolean calculate(Map<String, Boolean> values) {
         throw new UnsupportedOperationException("Cannot calculate scheme");
@@ -91,9 +95,5 @@ public class Scheme implements Expression {
     @Override
     public int hashCode() {
         return Objects.hash(name);
-    }
-
-    public static Expression create(String expression, Map<String, Expression> values) {
-        return EXPRESSION_PARSER.parse(expression).paste(values);
     }
 }

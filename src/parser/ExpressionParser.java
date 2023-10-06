@@ -27,9 +27,9 @@ public class ExpressionParser implements Parser<Expression> {
 
     private final static Map<Character, ArithmeticOperator> toArithmeticOperator =
             new HashMap<Character, ArithmeticOperator>() {{
-        put('+', ArithmeticOperator.PLUS);
-        put('*', ArithmeticOperator.MUL);
-    }};
+                put('+', ArithmeticOperator.PLUS);
+                put('*', ArithmeticOperator.MUL);
+            }};
 
     private final static Map<Character, Operator> toLogicOperator =
             new HashMap<Character, Operator>() {{
@@ -45,11 +45,10 @@ public class ExpressionParser implements Parser<Expression> {
     }
 
     /**
-     *
      * @param oldOp оператор выражения "сверху" (выражения, для которого данное выражение является его "правой" частью)
-     * @param op оператор, который соединяет сформированное выражение и остаток
-     * @param left сформированное выражение
-     * @param tail остаток
+     * @param op    оператор, который соединяет сформированное выражение и остаток
+     * @param left  сформированное выражение
+     * @param tail  остаток
      * @return expression
      */
     private Expression parseExpression(Operator oldOp, Operator op, Expression left,
@@ -106,17 +105,25 @@ public class ExpressionParser implements Parser<Expression> {
 
             Operator newOp = null;
             switch (symbol) {
-                case '&': newOp = Operator.AND; break;
-                case '|': newOp = Operator.OR; break;
-                case '-': newOp = Operator.IMPL; break;
-                case '!': newOp = Operator.NOT; break;
+                case '&':
+                    newOp = Operator.AND;
+                    break;
+                case '|':
+                    newOp = Operator.OR;
+                    break;
+                case '-':
+                    newOp = Operator.IMPL;
+                    break;
+                case '!':
+                    newOp = Operator.NOT;
+                    break;
             }
 
             // oldOp.prior <= op.prior
             assert symbol == ')' || newOp != null;
             if (symbol == ')' || oldOp != null
-                                && (newOp.priority < oldOp.priority
-                                    || (newOp == oldOp && newOp.leftAssoc))) {
+                    && (newOp.priority < oldOp.priority
+                    || (newOp == oldOp && newOp.leftAssoc))) {
                 if (!(symbol == ')' && oldOp == null)) tail.back();
                 return Expression.create(op, left, right);
             }
@@ -151,7 +158,7 @@ public class ExpressionParser implements Parser<Expression> {
             // symbol in "()[Letter]{+,*}"
 
             if (toLogicOperator.containsKey(symbol) || symbol == ')' && brackets == 0
-            || symbol == '=') {
+                    || symbol == '=') {
                 tail.back();
                 break;
             }
@@ -175,8 +182,12 @@ public class ExpressionParser implements Parser<Expression> {
 
             ArithmeticOperator newOp = null;
             switch (symbol) {
-                case '+': newOp = ArithmeticOperator.PLUS; break;
-                case '*': newOp = ArithmeticOperator.MUL; break;
+                case '+':
+                    newOp = ArithmeticOperator.PLUS;
+                    break;
+                case '*':
+                    newOp = ArithmeticOperator.MUL;
+                    break;
             }
 
             // oldOp.prior <= op.prior
