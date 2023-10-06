@@ -1,9 +1,9 @@
 package grammar;
 
 import grammar.operators.Operator;
-import grammar.proof.NProof;
-import grammar.proof.Proof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.Proof;
+import proof.context.ImmutableContext;
 
 public class BinaryAnd extends BinaryOperator {
     public BinaryAnd(Expression left, Expression right) {

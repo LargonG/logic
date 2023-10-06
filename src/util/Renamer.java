@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class Renamer {
     private final Set<String> letters;
-    private String base;
+    private final String base;
     private int iter;
 
     public Renamer(Set<String> letters) {

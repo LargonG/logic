@@ -1,10 +1,10 @@
 package grammar;
 
-import grammar.descriptions.natural.NaturalDescription;
+import proof.descriptions.natural.NaturalDescription;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.NProof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.Map;

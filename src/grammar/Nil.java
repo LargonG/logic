@@ -1,12 +1,12 @@
 package grammar;
 
-import grammar.descriptions.natural.NaturalRule;
+import proof.descriptions.natural.NaturalRule;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.NProof;
-import grammar.proof.PreProof;
-import grammar.proof.Proof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.PreProof;
+import proof.Proof;
+import proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.Map;

@@ -3,8 +3,8 @@ package grammar.predicates.quantifiers;
 import grammar.Expression;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.NProof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.context.ImmutableContext;
 
 import java.util.HashSet;
 import java.util.Map;

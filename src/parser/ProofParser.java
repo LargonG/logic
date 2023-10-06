@@ -1,8 +1,8 @@
 package parser;
 
 import grammar.Expression;
-import grammar.proof.Proof;
-import grammar.proof.context.LinkedContext;
+import proof.Proof;
+import proof.context.LinkedContext;
 
 import java.util.Arrays;
 import java.util.Objects;

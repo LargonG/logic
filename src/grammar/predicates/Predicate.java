@@ -1,8 +1,8 @@
 package grammar.predicates;
 
 import grammar.Expression;
-import grammar.proof.NProof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.context.ImmutableContext;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,7 +1,7 @@
 package grammar.operators;
 
-import grammar.proof.NProof;
-import grammar.proof.Proof;
+import proof.NProof;
+import proof.Proof;
 
 public enum Operator {
     IMPL(2, false, false, new Implication()),

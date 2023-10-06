@@ -2,11 +2,11 @@ package grammar.operators;
 
 import grammar.Expression;
 import grammar.Nil;
-import grammar.descriptions.natural.NaturalRule;
-import grammar.proof.NProof;
-import grammar.proof.PreProof;
-import grammar.proof.Proof;
-import grammar.proof.context.MutableContext;
+import proof.descriptions.natural.NaturalRule;
+import proof.NProof;
+import proof.PreProof;
+import proof.Proof;
+import proof.context.MutableContext;
 
 public class Implication implements Bundle {
     @Override

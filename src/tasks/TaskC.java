@@ -1,8 +1,8 @@
 package tasks;
 
-import grammar.proof.GProof;
-import grammar.proof.MetaProof;
-import grammar.proof.Proof;
+import proof.GProof;
+import proof.MetaProof;
+import proof.Proof;
 import parser.Parser;
 import parser.ProofParser;
 

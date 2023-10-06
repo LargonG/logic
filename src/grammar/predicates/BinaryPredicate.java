@@ -4,9 +4,9 @@ import grammar.Expression;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Arithmetic;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.GProof;
-import grammar.proof.builder.GProofBuilder;
-import grammar.proof.context.ImmutableContext;
+import proof.GProof;
+import proof.builder.GProofBuilder;
+import proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.Set;

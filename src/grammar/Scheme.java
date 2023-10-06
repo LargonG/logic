@@ -2,8 +2,8 @@ package grammar;
 
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.NProof;
-import grammar.proof.context.ImmutableContext;
+import proof.NProof;
+import proof.context.ImmutableContext;
 import parser.ExpressionParser;
 import util.Renamer;
 

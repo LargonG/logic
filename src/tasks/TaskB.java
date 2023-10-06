@@ -1,6 +1,6 @@
 package tasks;
 
-import grammar.proof.GProof;
+import proof.GProof;
 import parser.ProofParser;
 
 import java.util.List;

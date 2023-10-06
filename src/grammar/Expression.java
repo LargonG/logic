@@ -1,12 +1,12 @@
 package grammar;
 
-import grammar.descriptions.gilbert.GuilbertRule;
+import proof.descriptions.gilbert.GuilbertRule;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
-import grammar.proof.GProof;
-import grammar.proof.NProof;
-import grammar.proof.builder.GProofBuilder;
-import grammar.proof.context.ImmutableContext;
+import proof.GProof;
+import proof.NProof;
+import proof.builder.GProofBuilder;
+import proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.*;

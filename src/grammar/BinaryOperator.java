@@ -1,17 +1,17 @@
 package grammar;
 
-import grammar.descriptions.gilbert.GuilbertRule;
+import proof.descriptions.gilbert.GuilbertRule;
 import grammar.operators.Operator;
 import grammar.predicates.arithmetic.Letter;
 import grammar.predicates.quantifiers.ForAll;
 import grammar.predicates.quantifiers.Quantifier;
-import grammar.proof.GProof;
-import grammar.proof.NProof;
-import grammar.proof.Proof;
-import grammar.proof.builder.GProofBuilder;
-import grammar.proof.builder.transformations.ExistsTransformations;
-import grammar.proof.builder.transformations.ForAllTransformations;
-import grammar.proof.context.ImmutableContext;
+import proof.GProof;
+import proof.NProof;
+import proof.Proof;
+import proof.builder.GProofBuilder;
+import proof.builder.transformations.ExistsTransformations;
+import proof.builder.transformations.ForAllTransformations;
+import proof.context.ImmutableContext;
 import util.Renamer;
 
 import java.util.*;
