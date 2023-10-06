@@ -21,7 +21,11 @@ public interface Arithmetic {
 
     void getLetters(Set<Letter> letters);
 
-    String suffixString();
+    default String suffixString() {
+        StringBuilder builder = new StringBuilder();
+        suffixString(builder, null, false);
+        return builder.toString();
+    }
 
-    String suffixString(ArithmeticOperator before, boolean brackets);
+    void suffixString(StringBuilder builder, ArithmeticOperator before, boolean brackets);
 }

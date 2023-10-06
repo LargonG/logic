@@ -45,15 +45,17 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
         if (before != null && (before.priority > operator.priority || before == operator && brackets)) {
-            return "(" + left.suffixString(operator, !operator.leftAssoc)
-                    + operator
-                    + right.suffixString(operator, operator.leftAssoc) + ")";
+            builder.append("(");
+            left.suffixString(builder, operator, !operator.leftAssoc);
+            builder.append(operator);
+            right.suffixString(builder, operator, operator.leftAssoc);
+            builder.append(")");
         }
-        return left.suffixString(operator, !operator.leftAssoc)
-                + operator
-                + right.suffixString(operator, operator.leftAssoc);
+        left.suffixString(builder, operator, !operator.leftAssoc);
+        builder.append(operator);
+        right.suffixString(builder, operator, operator.leftAssoc);
     }
 
     @Override

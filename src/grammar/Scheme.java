@@ -35,8 +35,8 @@ public class Scheme implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
-        return name;
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
+        builder.append(name);
     }
 
     @Override

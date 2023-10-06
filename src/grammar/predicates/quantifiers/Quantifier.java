@@ -34,11 +34,14 @@ public abstract class Quantifier implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
         if (before != null) {
-            return "(" + sign + letter + "." + expression.suffixString() + ")";
+            builder.append("(").append(sign).append(letter).append(".");
+            expression.suffixString(builder, null, false);
+            builder.append(")");
         }
-        return sign + letter + "." + expression.suffixString();
+        builder.append(sign).append(letter).append(".");
+        expression.suffixString(builder, null, false);
     }
 
     @Override

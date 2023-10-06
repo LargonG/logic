@@ -39,20 +39,17 @@ public class BinaryArithmetic implements Arithmetic {
     }
 
     @Override
-    public String suffixString() {
-        return suffixString(null, false);
-    }
-
-    @Override
-    public String suffixString(ArithmeticOperator before, boolean brackets) {
+    public void suffixString(StringBuilder builder, ArithmeticOperator before, boolean brackets) {
         if (before != null && (before.priority > operator.priority || before == operator && brackets)) {
-            return "(" + left.suffixString(operator, false)
-                    + operator
-                    + right.suffixString(operator, true) + ")";
+            builder.append("(");
+            left.suffixString(builder, operator, false);
+            builder.append(operator);
+            right.suffixString(builder, operator, true);
+            builder.append(")");
         }
-        return left.suffixString(operator, false)
-                + operator
-                + right.suffixString(operator, true);
+        left.suffixString(builder, operator, false);
+        builder.append(operator);
+        right.suffixString(builder, operator, true);
     }
 
     @Override
