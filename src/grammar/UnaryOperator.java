@@ -86,6 +86,11 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
+    public int size() {
+        return expr.size() + 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         throw new UnsupportedOperationException("Unary operators are not supported");
     }

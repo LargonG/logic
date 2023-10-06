@@ -321,6 +321,11 @@ public class BinaryOperator implements Expression {
     }
 
     @Override
+    public int size() {
+        return left.size() + right.size() + 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         NProof left = this.left.createNProof(context);
         NProof right = this.right.createNProof(context);

@@ -80,6 +80,11 @@ public class Scheme implements Expression {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext immutableContext) {
         throw new UnsupportedOperationException("Scheme cannot create natural proof");
     }

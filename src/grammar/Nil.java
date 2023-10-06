@@ -40,6 +40,11 @@ public class Nil implements Expression {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         ImmutableContext newContext = context.merge(this);
         return NProof.zip(

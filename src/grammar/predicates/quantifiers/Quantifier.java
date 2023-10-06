@@ -29,6 +29,11 @@ public abstract class Quantifier implements Expression {
     }
 
     @Override
+    public int size() {
+        return expression.size() + 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         throw new UnsupportedOperationException("Not implemented");
     }

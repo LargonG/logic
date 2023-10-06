@@ -80,6 +80,8 @@ public interface Expression {
 
     Expression toNormalForm();
 
+    int size();
+
     NProof createNProof(ImmutableContext context);
 
     /**

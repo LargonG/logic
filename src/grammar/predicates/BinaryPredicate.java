@@ -25,6 +25,11 @@ public class BinaryPredicate implements Predicate {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
         left.suffixString(builder, null, false);
         builder.append(operator);

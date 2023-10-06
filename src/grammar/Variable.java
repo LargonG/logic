@@ -74,6 +74,11 @@ public class Variable implements Expression {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         Expression expr = this;
         if (!context.contains(expr)) {
