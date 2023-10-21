@@ -25,7 +25,7 @@ public class TaskD implements Task {
     @Override
     public void solution(String... args) {
         String line = Util.getLine(System.in);
-//        long start = System.nanoTime();
+        long start = System.nanoTime();
         Parser<Expression> parser = new ExpressionParser();
         Expression expression = parser.parse(line);
         List<String> variables = expression.getVariablesNames();
@@ -66,7 +66,7 @@ public class TaskD implements Task {
         zipped.printProofsTree(out);
         out.flush();
 
-//        long end = System.nanoTime();
+        long end = System.nanoTime();
 //        System.out.println("performance: " + (end - start) / 1e9);
 
 //        List<MetaProof> result = zipped.getProofTree();

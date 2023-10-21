@@ -21,8 +21,8 @@ public interface Bundle {
         Expression baseLeft = lst.get(0);
         Expression baseRight = lst.get(1);
 
-        if (left != null && left.getProof().getExpression().equals(baseLeft)
-                && right != null
+        if (left != null && right != null
+                && left.getProof().getExpression().equals(baseLeft)
                 && right.getProof().getExpression().equals(baseRight)) {
             return all(left, right, what, baseLeft, baseRight);
         } else if (left != null

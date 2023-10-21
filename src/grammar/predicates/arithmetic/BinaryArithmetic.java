@@ -46,6 +46,7 @@ public class BinaryArithmetic implements Arithmetic {
             builder.append(operator);
             right.suffixString(builder, operator, true);
             builder.append(")");
+            return;
         }
         left.suffixString(builder, operator, false);
         builder.append(operator);

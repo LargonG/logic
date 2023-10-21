@@ -13,10 +13,10 @@ public class BinaryImplement extends BinaryOperator {
 
     @Override
     public NProof createNProof(ImmutableContext context) {
-        NProof right = this.right.createNProof(context);
-        if (right.getProof().getExpression().equals(this.right)) {
-            return operator.createNProof(null, right, new Proof(this, context));
+        NProof rightProof = right.createNProof(context);
+        if (rightProof.getProof().getExpression().equals(right)) {
+            return operator.creator.right(null, rightProof, new Proof(this, context), left, right);
         }
-        return operator.createNProof(this.left.createNProof(context), right, new Proof(this, context));
+        return operator.createNProof(left.createNProof(context), rightProof, new Proof(this, context));
     }
 }

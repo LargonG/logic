@@ -15,13 +15,25 @@ public class BinaryOr extends BinaryOperator {
         NProof leftProof = null;
         NProof rightProof = null;
 
-        if ((left.hashCode() < right.hashCode() ?
-                (leftProof = left.createNProof(context)) : (rightProof = right.createNProof(context)))
-                .getProof().getExpression().equals(left.hashCode() < right.hashCode() ? left : right)) {
-            return operator.createNProof(leftProof, rightProof, new Proof(this, context));
+        if (left.size() < right.size()) {
+            leftProof = left.createNProof(context);
+            if (leftProof.getProof().getExpression().equals(left)) {
+                return operator.creator.left(leftProof, rightProof, new Proof(this, context), left, right);
+            }
+            rightProof = right.createNProof(context);
+            if (rightProof.getProof().getExpression().equals(right)) {
+                return operator.creator.right(leftProof, rightProof, new Proof(this, context), left, right);
+            }
+        } else {
+            rightProof = right.createNProof(context);
+            if (rightProof.getProof().getExpression().equals(right)) {
+                return operator.creator.right(leftProof, rightProof, new Proof(this, context), left, right);
+            }
+            leftProof = left.createNProof(context);
+            if (leftProof.getProof().getExpression().equals(left)) {
+                return operator.creator.left(leftProof, rightProof, new Proof(this, context), left, right);
+            }
         }
-        NProof some = left.hashCode() < right.hashCode() ? (rightProof = right.createNProof(context)) :
-                (leftProof = left.createNProof(context));
-        return operator.createNProof(leftProof, rightProof, new Proof(this, context));
+        return operator.creator.none(leftProof, rightProof, new Proof(this, context), left, right);
     }
 }

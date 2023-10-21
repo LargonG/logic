@@ -52,6 +52,7 @@ public class BinaryOperator implements Expression {
             builder.append(operator);
             right.suffixString(builder, operator, operator.leftAssoc);
             builder.append(")");
+            return;
         }
         left.suffixString(builder, operator, !operator.leftAssoc);
         builder.append(operator);

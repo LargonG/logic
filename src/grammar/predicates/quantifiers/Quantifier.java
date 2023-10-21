@@ -44,6 +44,7 @@ public abstract class Quantifier implements Expression {
             builder.append("(").append(sign).append(letter).append(".");
             expression.suffixString(builder, null, false);
             builder.append(")");
+            return;
         }
         builder.append(sign).append(letter).append(".");
         expression.suffixString(builder, null, false);
