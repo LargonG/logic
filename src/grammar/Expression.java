@@ -80,6 +80,8 @@ public interface Expression {
 
     Expression toNormalForm();
 
+    int size();
+
     NProof createNProof(ImmutableContext context);
 
     /**
@@ -108,10 +110,12 @@ public interface Expression {
         return result;
     }
 
-    String suffixString(Operator before, boolean brackets);
+    void suffixString(StringBuilder builder, Operator before, boolean brackets);
 
     default String suffixString() {
-        return suffixString(null, false);
+        StringBuilder builder = new StringBuilder();
+        suffixString(builder, null, false);
+        return builder.toString();
     }
 
 //    default Set<String> getFreeLettersNames() {

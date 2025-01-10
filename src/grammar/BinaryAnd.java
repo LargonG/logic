@@ -12,26 +12,29 @@ public class BinaryAnd extends BinaryOperator {
 
     @Override
     public NProof createNProof(ImmutableContext context) {
-        NProof leftProof = null;
-        NProof rightProof = null;
+        NProof leftProof;
+        NProof rightProof;
+        Proof proof = new Proof(this, context);
 
-        if (left.hashCode() < right.hashCode()) {
+        if (left.size() < right.size()) {
             leftProof = left.createNProof(context);
+            if (!leftProof.getProof().getExpression().equals(left)) {
+                return operator.creator.right(leftProof, null, proof, left, right);
+            }
+            rightProof = right.createNProof(context);
+            if (!rightProof.getProof().getExpression().equals(right)) {
+                return operator.creator.left(leftProof, rightProof, proof, left, right);
+            }
         } else {
             rightProof = right.createNProof(context);
-        }
-
-        if (leftProof != null && !leftProof.getProof().getExpression().equals(left)
-                || rightProof != null && !rightProof.getProof().getExpression().equals(right)) {
-            return operator.createNProof(leftProof, rightProof, new Proof(this, context));
-        }
-
-        if (leftProof == null) {
+            if (!rightProof.getProof().getExpression().equals(right)) {
+                return operator.creator.left(null, rightProof, proof, left, right);
+            }
             leftProof = left.createNProof(context);
-        } else {
-            rightProof = right.createNProof(context);
+            if (!leftProof.getProof().getExpression().equals(left)) {
+                return operator.creator.right(leftProof, rightProof, proof, left, right);
+            }
         }
-
-        return operator.createNProof(leftProof, rightProof, new Proof(this, context));
+        return operator.creator.all(leftProof, rightProof, proof, left, right);
     }
 }

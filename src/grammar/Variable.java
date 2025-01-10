@@ -29,8 +29,8 @@ public class Variable implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
-        return name;
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
+        builder.append(name);
     }
 
     @Override
@@ -71,6 +71,11 @@ public class Variable implements Expression {
     @Override
     public Expression toNormalForm() {
         return this;
+    }
+
+    @Override
+    public int size() {
+        return 1;
     }
 
     @Override

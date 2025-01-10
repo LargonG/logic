@@ -52,8 +52,8 @@ public class Letter implements Arithmetic {
     }
 
     @Override
-    public String suffixString(ArithmeticOperator before, boolean brackets) {
-        return name;
+    public void suffixString(StringBuilder builder, ArithmeticOperator before, boolean brackets) {
+        builder.append(name);
     }
 
     public String getName() {

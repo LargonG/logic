@@ -35,8 +35,9 @@ public class UnaryOperator implements Expression {
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
-        return operator.toString() + expr.suffixString(this.operator, true);
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
+        builder.append(operator);
+        expr.suffixString(builder, this.operator, true);
     }
 
     @Override
@@ -82,6 +83,11 @@ public class UnaryOperator implements Expression {
     @Override
     public Expression toNormalForm() {
         return new BinaryOperator(Operator.IMPL, expr.toNormalForm(), Nil.getInstance());
+    }
+
+    @Override
+    public int size() {
+        return expr.size() + 1;
     }
 
     @Override

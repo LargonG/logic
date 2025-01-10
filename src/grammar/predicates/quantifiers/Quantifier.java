@@ -29,16 +29,25 @@ public abstract class Quantifier implements Expression {
     }
 
     @Override
+    public int size() {
+        return expression.size() + 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
         if (before != null) {
-            return "(" + sign + letter + "." + expression.suffixString() + ")";
+            builder.append("(").append(sign).append(letter).append(".");
+            expression.suffixString(builder, null, false);
+            builder.append(")");
+            return;
         }
-        return sign + letter + "." + expression.suffixString();
+        builder.append(sign).append(letter).append(".");
+        expression.suffixString(builder, null, false);
     }
 
     @Override

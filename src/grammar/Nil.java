@@ -13,18 +13,15 @@ import java.util.Map;
 import java.util.Set;
 
 public class Nil implements Expression {
-    private final static Nil instance;
-
-    static {
-        instance = new Nil();
-    }
+    private final static String NAME = "_|_";
+    private final static Nil INSTANCE = new Nil();
 
     private Nil() {
 
     }
 
     public static Nil getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     @Override
@@ -43,6 +40,11 @@ public class Nil implements Expression {
     }
 
     @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public NProof createNProof(ImmutableContext context) {
         ImmutableContext newContext = context.merge(this);
         return NProof.zip(
@@ -54,12 +56,12 @@ public class Nil implements Expression {
 
     @Override
     public String toString() {
-        return "_|_";
+        return NAME;
     }
 
     @Override
-    public String suffixString(Operator before, boolean brackets) {
-        return "_|_";
+    public void suffixString(StringBuilder builder, Operator before, boolean brackets) {
+        builder.append(NAME);
     }
 
     @Override
